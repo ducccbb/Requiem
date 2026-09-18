@@ -4051,7 +4051,27 @@ local function checkTrainerEnvironment()
             end
         end
     end)
-    local isAllowed = isExam or isSupporter or (eventNum ~= 0)
+
+    local hasGearCert = false
+    pcall(function()
+        local Common = ReplicatedStorage:WaitForChild("Common")
+        local Network = Common:WaitForChild("Network")
+        local Namespaces = Network:WaitForChild("Namespaces")
+        local CertNs = require(Namespaces:WaitForChild("Certifications"))
+        if CertNs and CertNs.Store then
+            local certs = CertNs.Store.client()
+            if typeof(certs) == "table" then
+                for _, cert in pairs(certs) do
+                    if cert.name == "Gear" then
+                        hasGearCert = true
+                        break
+                    end
+                end
+            end
+        end
+    end)
+
+    local isAllowed = (isExam or isSupporter or (eventNum ~= 0)) and not hasGearCert
     local mapName = "Khác"
     if isExam then
         mapName = "Trường Huấn Luyện (Exam Place)"
@@ -4060,7 +4080,7 @@ local function checkTrainerEnvironment()
     elseif placeId == 18126170981 then
         mapName = "Sảnh Chờ (Lobby)"
     end
-    return isAllowed, mapName, eventNum, isExam
+    return isAllowed, mapName, eventNum, isExam, hasGearCert
 end
 
 -- Helper: Tìm ghế Gear Trainer gần nhất
@@ -4122,11 +4142,13 @@ TabAdvancedAuto:CreateButton({
     Name = "🔍 Kiểm Tra Trạng Thái Server & Ghế Tập",
     Description = "Kiểm tra xem Server hiện tại có cho phép tập Gear không và tìm ghế trống quanh nhân vật",
     Callback = function()
-        local isAllowed, mapName, eventNum, isExam = checkTrainerEnvironment()
+        local isAllowed, mapName, eventNum, isExam, hasGearCert = checkTrainerEnvironment()
         local bestSeat, bestDist, totalSeats = findNearestTrainerSeat()
 
         local statusText = ""
-        if isExam then
+        if hasGearCert then
+            statusText = "⛔ ĐÃ CÓ CHỨNG CHỈ GEAR: Server chặn bài tập này ('You are already certified to use gear.'). Ghế chỉ dành cho Tân binh chưa tốt nghiệp!"
+        elseif isExam then
             statusText = "✅ Map Exam: Trainer MỞ 24/7!"
         elseif isAllowed then
             statusText = string.format("✅ Map chính: Đang có Event (%d)! Trainer KHẢ DỤNG.", eventNum)
@@ -4144,7 +4166,7 @@ TabAdvancedAuto:CreateButton({
                 ImageSource = "Material"
             })
         end
-        print(string.format("[Requiem Hub] Trainer Check: Map = %s | Allowed = %s | Event = %d | Seats = %d", mapName, tostring(isAllowed), eventNum, totalSeats))
+        print(string.format("[Requiem Hub] Trainer Check: Map = %s | Allowed = %s | HasGearCert = %s | Event = %d | Seats = %d", mapName, tostring(isAllowed), tostring(hasGearCert), eventNum, totalSeats))
     end
 })
 
@@ -4172,7 +4194,19 @@ TabAdvancedAuto:CreateButton({
     Description = "Tự động bay đến ghế trống -> Gửi handshake ngồi ghế -> Chờ Server cấp Session -> Gửi điểm Rhythm Game -> Nhận Bùa & 1,300 EXP",
     Callback = function()
         task.spawn(function()
-            local isAllowed, mapName, eventNum, isExam = checkTrainerEnvironment()
+            local isAllowed, mapName, eventNum, isExam, hasGearCert = checkTrainerEnvironment()
+            if hasGearCert then
+                if Luna and typeof(Luna.Notification) == "function" then
+                    Luna:Notification({
+                        Title = "Server Từ Chối!",
+                        Content = "Bạn ĐÃ CÓ chứng chỉ Gear! Server khóa máy tập này ('You are already certified to use gear.').",
+                        Icon = "block",
+                        ImageSource = "Material"
+                    })
+                end
+                return
+            end
+
             if not isAllowed then
                 if Luna and typeof(Luna.Notification) == "function" then
                     Luna:Notification({
