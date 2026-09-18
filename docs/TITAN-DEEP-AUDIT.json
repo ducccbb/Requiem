@@ -1,0 +1,1168 @@
+﻿{
+    "GeneratedAt":  "2026-07-20T21:42:23.2861933+07:00",
+    "Counts":  {
+                   "HIGH":  0,
+                   "INFO":  0,
+                   "LOW":  0,
+                   "PASS":  165,
+                   "CRITICAL":  0,
+                   "MEDIUM":  0
+               },
+    "Findings":  [
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:AnimationTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility AnimationTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\AnimationTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:CooldownTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility CooldownTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\CooldownTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:DetectionBoxTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility DetectionBoxTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\DetectionBoxTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:GrabTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility GrabTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\GrabTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:HitboxTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility HitboxTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\HitboxTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:KinematicTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility KinematicTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\KinematicTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:ModelTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility ModelTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\ModelTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:NapeProtectionTitanClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility NapeProtectionTitanClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\NapeProtectionTitanClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:TitanClientProximity",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility TitanClientProximity exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\TitanClientProximity.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:TitanCoreActionClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility TitanCoreActionClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\TitanCoreActionClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "utility:file:TitanProtectiveNapeClient",
+                         "Area":  "Inventory",
+                         "Detail":  "Scarlet utility TitanProtectiveNapeClient exists.",
+                         "Evidence":  "D:\\scarlet\\src\\StarterPlayer\\StarterPlayerScripts\\Framework\\Modules\\Titans\\Utilities\\TitanProtectiveNapeClient.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "bootstrap:titans-runtime-module",
+                         "Area":  "Bootstrap",
+                         "Detail":  "Titans registers Runtime as a dependency and resolves it through Scarlet GetModules() at Start.",
+                         "Evidence":  "Server Titans:init.luau/Distributor"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "runtime:reaction-validator-api",
+                         "Area":  "Runtime",
+                         "Detail":  "Runtime server exposes RegisterReactionValidator.",
+                         "Evidence":  "Runtime:init.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "runtime:ragdoll-adapter",
+                         "Area":  "Runtime",
+                         "Detail":  "Runtime RagdollService adapts Scarlet character leases through Acquire/Release.",
+                         "Evidence":  "Runtime/RagdollService.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:gear-facade",
+                         "Area":  "Detection",
+                         "Detail":  "Detection uses Runtime.Gear facade.",
+                         "Evidence":  "DetectionBoxTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:asset-layout",
+                         "Area":  "Detection",
+                         "Detail":  "Detection resolver supports Scarlet sibling-reference layout.",
+                         "Evidence":  "DetectionBoxTitanClient:findDetectionRoot/bakeDetectionBoxes"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:reeling",
+                         "Area":  "Detection",
+                         "Detail":  "Reeling + goal prediction branch exists.",
+                         "Evidence":  "DetectionBoxTitanClient:predictPosition"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:prediction",
+                         "Area":  "Detection",
+                         "Detail":  "Curved and gear prediction exists.",
+                         "Evidence":  "DetectionBoxTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:gear-modes",
+                         "Area":  "Detection",
+                         "Detail":  "Detection distinguishes linear, reeling-goal and orbit prediction modes.",
+                         "Evidence":  "DetectionBoxTitanClient:predictPosition"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:batch",
+                         "Area":  "Detection",
+                         "Detail":  "Prediction calls use a batch window.",
+                         "Evidence":  "DetectionBoxTitanClient:impactWindow"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:frame-cache",
+                         "Area":  "Detection",
+                         "Detail":  "Frame cache exists.",
+                         "Evidence":  "DetectionBoxTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "prediction:shared-frame-cache",
+                         "Area":  "Prediction",
+                         "Detail":  "Prediction cache survives EndBatch and is cleared by the next movement sample.",
+                         "Evidence":  "CharacterPredictionRunner:EndBatch/_sample"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "detection:debug",
+                         "Area":  "Detection",
+                         "Detail":  "Debug detection box visualization exists.",
+                         "Evidence":  "DetectionBoxTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "rig:point-no-body-fallback",
+                         "Area":  "Rig",
+                         "Detail":  "Nape/Eyes/Mouth require their named point and cannot fall back to Head.",
+                         "Evidence":  "Shared Titans/RigMap.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:touched",
+                         "Area":  "Hitbox",
+                         "Detail":  "Limb hitbox uses .Touched.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:weld",
+                         "Area":  "Hitbox",
+                         "Detail":  "Limb hitbox is welded to animated limb.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:can-touch",
+                         "Area":  "Hitbox",
+                         "Detail":  "CanTouch is enabled/leased for active hitbox.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:local-character-filter",
+                         "Area":  "Hitbox",
+                         "Detail":  "Touched events are restricted to known local-character body parts.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:delay",
+                         "Area":  "Hitbox",
+                         "Detail":  "Delayed activation exists.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:priority",
+                         "Area":  "Hitbox",
+                         "Detail":  "Priority limb override exists.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:no-overlap",
+                         "Area":  "Hitbox",
+                         "Detail":  "Limb hitbox keeps Requiem Touched detection; overlap is only a start-overlap fallback.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:cleanup",
+                         "Area":  "Hitbox",
+                         "Detail":  "Hitbox listener cleanup is visible.",
+                         "Evidence":  "HitboxTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:runner-ownership",
+                         "Area":  "Hitbox",
+                         "Detail":  "Hitbox runner disconnects only the RenderStepped connection it still owns.",
+                         "Evidence":  "HitboxTitanClient:ensureRunner"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "hitbox:wire-resistance",
+                         "Area":  "Hitbox",
+                         "Detail":  "Wire resistance, excess resistance and effect branch exists.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "grab:kinematic-source-contract",
+                         "Area":  "Grab",
+                         "Detail":  "Normal Requiem grab does not require createKinematicInfluence; animated limb + physical hitbox is the source contract.",
+                         "Evidence":  "Requiem Default grab actions"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "grab:hitbox-chain",
+                         "Area":  "Grab",
+                         "Detail":  "Grab action creates limb hitbox.",
+                         "Evidence":  "CommonAction:createGrab"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "grab:cleanup",
+                         "Area":  "Grab",
+                         "Detail":  "Grab resources are bound to cleanup.",
+                         "Evidence":  "CommonAction:createGrab"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "grab:client-state",
+                         "Area":  "Grab",
+                         "Detail":  "Client grab state and gear cleanup exist.",
+                         "Evidence":  "GrabTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "grab:server-lifecycle",
+                         "Area":  "Grab",
+                         "Detail":  "Server grab lifecycle cleanup exists.",
+                         "Evidence":  "RequiemActions"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "grab:target-ownership",
+                         "Area":  "Grab",
+                         "Detail":  "Grab ownership is target-centric and cleans on PlayerRemoving.",
+                         "Evidence":  "RequiemActions:grab/cleanupGrab"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:response",
+                         "Area":  "Protocol",
+                         "Detail":  "Action response boundary exists.",
+                         "Evidence":  "Protocol"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:epoch",
+                         "Area":  "Protocol",
+                         "Detail":  "Action response is epoch-bound.",
+                         "Evidence":  "Protocol"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:target",
+                         "Area":  "Protocol",
+                         "Detail":  "Target ownership validation exists.",
+                         "Evidence":  "Protocol"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:response-target",
+                         "Area":  "Protocol",
+                         "Detail":  "Action response is bound to the committed target user.",
+                         "Evidence":  "Protocol:_onActionIntent/_onActionResponse"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:physical-fallback",
+                         "Area":  "Protocol",
+                         "Detail":  "Physical response rejects unmatched limb fallback.",
+                         "Evidence":  "RequiemActions:physicalResponseValid"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:rig-physical-part",
+                         "Area":  "Protocol",
+                         "Detail":  "Server physical validation resolves canonical rig points to BaseParts through RigMap.",
+                         "Evidence":  "RequiemActions:physicalPart/physicalResponseValid"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "protocol:response-consume-order",
+                         "Area":  "Protocol",
+                         "Detail":  "Response epoch is consumed only after handler acceptance.",
+                         "Evidence":  "Protocol:_onActionResponse"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "model:visual-policy",
+                         "Area":  "Model",
+                         "Detail":  "Scarlet visual preparation policy exists.",
+                         "Evidence":  "ModelTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "model:wire-query",
+                         "Area":  "Model",
+                         "Detail":  "Animated visual remains queryable for wire raycasts.",
+                         "Evidence":  "ModelTitanClient:prepareVisual"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "model:root-policy",
+                         "Area":  "Model",
+                         "Detail":  "Root transform clamp policy exists and must be action-gated.",
+                         "Evidence":  "ModelTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "kinematic:ik",
+                         "Area":  "Kinematic",
+                         "Detail":  "Generic IK influence exists.",
+                         "Evidence":  "KinematicTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "kinematic:easing",
+                         "Area":  "Kinematic",
+                         "Detail":  "IK easing lifecycle exists.",
+                         "Evidence":  "KinematicTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "kinematic:restore",
+                         "Area":  "Kinematic",
+                         "Detail":  "Motor/origin cleanup exists.",
+                         "Evidence":  "KinematicTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "kinematic:chain",
+                         "Area":  "Kinematic",
+                         "Detail":  "IK chain guards exist.",
+                         "Evidence":  "KinematicTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "prediction:requiem-curve",
+                         "Area":  "Prediction",
+                         "Detail":  "Prediction runner has Requiem-style angular/curve analysis and fixed-step integration.",
+                         "Evidence":  "CharacterPredictionRunner"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "kinematic:lookat-defaults",
+                         "Area":  "Kinematic",
+                         "Detail":  "LookAt uses Requiem SmoothTime defaults.",
+                         "Evidence":  "KinematicTitanClient:createLookAtInfluence"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "kinematic:bite-ik-defaults",
+                         "Area":  "Kinematic",
+                         "Detail":  "Bite IK uses Requiem easing defaults.",
+                         "Evidence":  "KinematicTitanClient:createBiteIKInfluence"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "core:cooldown",
+                         "Area":  "Core",
+                         "Detail":  "Core reaction cooldown exists.",
+                         "Evidence":  "TitanCoreActionClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "core:cleanup",
+                         "Area":  "Core",
+                         "Detail":  "Core cooldown is independent from animation cleanup.",
+                         "Evidence":  "TitanCoreActionClient:markCoreReactionStarted"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "core:classification",
+                         "Area":  "Core",
+                         "Detail":  "Core/reaction classification exists.",
+                         "Evidence":  "TitanCoreActionClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "animation:length",
+                         "Area":  "Animation",
+                         "Detail":  "Animation length/speed contract exists.",
+                         "Evidence":  "AnimationTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "animation:jump-markers",
+                         "Area":  "Animation",
+                         "Detail":  "GrappleJumpShake binds Up/Down keyframes through the returned AnimationTrack.",
+                         "Evidence":  "GrappleJumpShake"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "wire:raycast",
+                         "Area":  "Hitbox",
+                         "Detail":  "Wire-swat has a raycast path.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "wire:sounds",
+                         "Area":  "Effects",
+                         "Detail":  "Wire-swat sounds are mapped.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "wire:sound-timing",
+                         "Area":  "Effects",
+                         "Detail":  "Wire-swat fade/volume/playback timing matches Requiem through Scarlet Effects.",
+                         "Evidence":  "HitboxTitanClient/EffectsRuntime"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "mouth:async-signal-lifecycle",
+                         "Area":  "Hitbox",
+                         "Detail":  "Mouth hitbox fires the response before optional record cleanup and remains lifecycle-bound.",
+                         "Evidence":  "HitboxTitanClient:createMouthHitbox/Shared Signal"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "animation:eaten-contract",
+                         "Area":  "Animation",
+                         "Detail":  "Eaten player reaction animation is present in the shared animation contract.",
+                         "Evidence":  "Shared Titans Animations/DefaultTitanChewing"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "wire:monologue",
+                         "Area":  "Effects",
+                         "Detail":  "Wire-swat monologue branch exists.",
+                         "Evidence":  "HitboxTitanClient:createLimbHitbox"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:long-ground-crush-ragdoll",
+                         "Area":  "Actions",
+                         "Detail":  "LongRangeAttackGround crush uses a 5-second default ragdoll.",
+                         "Evidence":  "CommonAction:createBothArmAttack"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:jump-shake-ragdoll",
+                         "Area":  "Actions",
+                         "Detail":  "GrappleJumpShake landing uses a 5-second ragdoll.",
+                         "Evidence":  "GrappleJumpShake"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "cooldown:shared-clock",
+                         "Area":  "Cooldown",
+                         "Detail":  "Cooldown uses shared clock contract.",
+                         "Evidence":  "CooldownTitanClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "lifecycle:registry-cleanup",
+                         "Area":  "Lifecycle",
+                         "Detail":  "Titan registry cleanup hook exists.",
+                         "Evidence":  "ClientTitanRegistry"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "lifecycle:target-client-owner",
+                         "Area":  "Protocol",
+                         "Detail":  "Only the authoritative target client runs the local Titan action chooser.",
+                         "Evidence":  "ClientTitanRegistry/RequiemClient"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "lifecycle:scheduler-batch",
+                         "Area":  "Lifecycle",
+                         "Detail":  "Scheduler has prediction/step batch contract.",
+                         "Evidence":  "TitanScheduler"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "lifecycle:kinematic-clear",
+                         "Area":  "Lifecycle",
+                         "Detail":  "Client Titan lifecycle has kinematic cleanup path.",
+                         "Evidence":  "Titans client init"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "lifecycle:no-dual-normal-registry",
+                         "Area":  "Lifecycle",
+                         "Detail":  "Normal/Default Titans are exclusively owned by the Requiem runtime when enabled.",
+                         "Evidence":  "Titans client init:handledByRequiemRuntime"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "inventory:default-actions",
+                         "Area":  "Inventory",
+                         "Detail":  "All 30 Requiem Default action paths are present.",
+                         "Evidence":  "Requiem Default Actions vs Scarlet Default Actions"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:anger-longrangeattackair-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Anger/LongRangeAttackAir.luau.",
+                         "Evidence":  "Anger/LongRangeAttackAir.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:anger-longrangeattackair-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Anger/LongRangeAttackAir.luau.",
+                         "Evidence":  "Anger/LongRangeAttackAir.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:anger-longrangeattackair-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Anger/LongRangeAttackAir.luau.",
+                         "Evidence":  "Anger/LongRangeAttackAir.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:anger-longrangeattackair-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Anger/LongRangeAttackAir.luau.",
+                         "Evidence":  "Anger/LongRangeAttackAir.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:anger-longrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Anger/LongRangeAttackGround.luau.",
+                         "Evidence":  "Anger/LongRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:anger-longrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Anger/LongRangeAttackGround.luau.",
+                         "Evidence":  "Anger/LongRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:anger-longrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Anger/LongRangeAttackGround.luau.",
+                         "Evidence":  "Anger/LongRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:anger-longrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Anger/LongRangeAttackGround.luau.",
+                         "Evidence":  "Anger/LongRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:anger-longrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Anger/LongRangeBite.luau.",
+                         "Evidence":  "Anger/LongRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:anger-longrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Anger/LongRangeBite.luau.",
+                         "Evidence":  "Anger/LongRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:anger-longrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Anger/LongRangeBite.luau.",
+                         "Evidence":  "Anger/LongRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:anger-longrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Anger/LongRangeBite.luau.",
+                         "Evidence":  "Anger/LongRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:anger-mediumrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Anger/MediumRangeBite.luau.",
+                         "Evidence":  "Anger/MediumRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:anger-mediumrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Anger/MediumRangeBite.luau.",
+                         "Evidence":  "Anger/MediumRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:anger-mediumrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Anger/MediumRangeBite.luau.",
+                         "Evidence":  "Anger/MediumRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:anger-mediumrangebite-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Anger/MediumRangeBite.luau.",
+                         "Evidence":  "Anger/MediumRangeBite.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-angrystomp-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/AngryStomp.luau.",
+                         "Evidence":  "Default/AngryStomp.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-angrystomp-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/AngryStomp.luau.",
+                         "Evidence":  "Default/AngryStomp.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-angrystomp-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/AngryStomp.luau.",
+                         "Evidence":  "Default/AngryStomp.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-backgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/BackGrab.luau.",
+                         "Evidence":  "Default/BackGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-backgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/BackGrab.luau.",
+                         "Evidence":  "Default/BackGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-backgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/BackGrab.luau.",
+                         "Evidence":  "Default/BackGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-eyegrabattack-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/EyeGrabAttack.luau.",
+                         "Evidence":  "Default/EyeGrabAttack.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-longrangeabovegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/LongRangeAboveGrab.luau.",
+                         "Evidence":  "Default/LongRangeAboveGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-longrangeabovegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/LongRangeAboveGrab.luau.",
+                         "Evidence":  "Default/LongRangeAboveGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-longrangeabovegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/LongRangeAboveGrab.luau.",
+                         "Evidence":  "Default/LongRangeAboveGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-longrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/LongRangeGrab.luau.",
+                         "Evidence":  "Default/LongRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-longrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/LongRangeGrab.luau.",
+                         "Evidence":  "Default/LongRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-longrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/LongRangeGrab.luau.",
+                         "Evidence":  "Default/LongRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:default-longrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Default/LongRangeGrab.luau.",
+                         "Evidence":  "Default/LongRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-longrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/LongRangeKick.luau.",
+                         "Evidence":  "Default/LongRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-longrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/LongRangeKick.luau.",
+                         "Evidence":  "Default/LongRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-longrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/LongRangeKick.luau.",
+                         "Evidence":  "Default/LongRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:default-longrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Default/LongRangeKick.luau.",
+                         "Evidence":  "Default/LongRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-mediumrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/MediumRangeGrab.luau.",
+                         "Evidence":  "Default/MediumRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-mediumrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/MediumRangeGrab.luau.",
+                         "Evidence":  "Default/MediumRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-mediumrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/MediumRangeGrab.luau.",
+                         "Evidence":  "Default/MediumRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-mediumrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/MediumRangeKick.luau.",
+                         "Evidence":  "Default/MediumRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-mediumrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/MediumRangeKick.luau.",
+                         "Evidence":  "Default/MediumRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-mediumrangekick-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/MediumRangeKick.luau.",
+                         "Evidence":  "Default/MediumRangeKick.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-napegrabattack-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/NapeGrabAttack.luau.",
+                         "Evidence":  "Default/NapeGrabAttack.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-napegrabswats-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/NapeGrabSwats.luau.",
+                         "Evidence":  "Default/NapeGrabSwats.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:default-napegrabswats-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Default/NapeGrabSwats.luau.",
+                         "Evidence":  "Default/NapeGrabSwats.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-shortrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/ShortRangeAttackGround.luau.",
+                         "Evidence":  "Default/ShortRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-shortrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/ShortRangeAttackGround.luau.",
+                         "Evidence":  "Default/ShortRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-shortrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/ShortRangeAttackGround.luau.",
+                         "Evidence":  "Default/ShortRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:default-shortrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Default/ShortRangeAttackGround.luau.",
+                         "Evidence":  "Default/ShortRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-shortrangefrontarmgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/ShortRangeFrontArmGrab.luau.",
+                         "Evidence":  "Default/ShortRangeFrontArmGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-shortrangefrontarmgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/ShortRangeFrontArmGrab.luau.",
+                         "Evidence":  "Default/ShortRangeFrontArmGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-shortrangefrontarmgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/ShortRangeFrontArmGrab.luau.",
+                         "Evidence":  "Default/ShortRangeFrontArmGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-shortrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/ShortRangeGrab.luau.",
+                         "Evidence":  "Default/ShortRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-shortrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/ShortRangeGrab.luau.",
+                         "Evidence":  "Default/ShortRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-shortrangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/ShortRangeGrab.luau.",
+                         "Evidence":  "Default/ShortRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-shortrangegrableg-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/ShortRangeGrabLeg.luau.",
+                         "Evidence":  "Default/ShortRangeGrabLeg.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-shortrangegrableg-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/ShortRangeGrabLeg.luau.",
+                         "Evidence":  "Default/ShortRangeGrabLeg.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-shortrangegrableg-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/ShortRangeGrabLeg.luau.",
+                         "Evidence":  "Default/ShortRangeGrabLeg.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-shortrangeswat-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/ShortRangeSwat.luau.",
+                         "Evidence":  "Default/ShortRangeSwat.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-shortrangeswat-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/ShortRangeSwat.luau.",
+                         "Evidence":  "Default/ShortRangeSwat.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-shortrangeswat-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/ShortRangeSwat.luau.",
+                         "Evidence":  "Default/ShortRangeSwat.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-sidewaysgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/SidewaysGrab.luau.",
+                         "Evidence":  "Default/SidewaysGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-sidewaysgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/SidewaysGrab.luau.",
+                         "Evidence":  "Default/SidewaysGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-sidewaysgrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/SidewaysGrab.luau.",
+                         "Evidence":  "Default/SidewaysGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:default-widerangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Default/WideRangeGrab.luau.",
+                         "Evidence":  "Default/WideRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:default-widerangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Default/WideRangeGrab.luau.",
+                         "Evidence":  "Default/WideRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:default-widerangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Default/WideRangeGrab.luau.",
+                         "Evidence":  "Default/WideRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:chance:default-widerangegrab-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Random selection/rejection threshold matches Requiem for Default/WideRangeGrab.luau.",
+                         "Evidence":  "Default/WideRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection:idiocy-mediumrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection box/impactAt matches Requiem for Idiocy/MediumRangeAttackGround.luau.",
+                         "Evidence":  "Idiocy/MediumRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:detection-fields:idiocy-mediumrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Detection tuning fields match Requiem for Idiocy/MediumRangeAttackGround.luau.",
+                         "Evidence":  "Idiocy/MediumRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:cooldown:idiocy-mediumrangeattackground-luau",
+                         "Area":  "Actions",
+                         "Detail":  "Primary cooldown matches Requiem for Idiocy/MediumRangeAttackGround.luau.",
+                         "Evidence":  "Idiocy/MediumRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:long-bite-aim-lifetime",
+                         "Area":  "Kinematic",
+                         "Detail":  "LongRangeBite aim lifetime uses Requiem 0.833/animationSpeed timing.",
+                         "Evidence":  "LongRangeBite/CommonAction:createBite"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:anger-longrangeattackair-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Anger/LongRangeAttackAir.luau.",
+                         "Evidence":  "Anger/LongRangeAttackAir.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:anger-longrangeattackground-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Anger/LongRangeAttackGround.luau.",
+                         "Evidence":  "Anger/LongRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-backgrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/BackGrab.luau.",
+                         "Evidence":  "Default/BackGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-defaulttitanblinded-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/DefaultTitanBlinded.luau.",
+                         "Evidence":  "Default/DefaultTitanBlinded.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-eyegrabattack-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/EyeGrabAttack.luau.",
+                         "Evidence":  "Default/EyeGrabAttack.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-grapplejumpshake-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/GrappleJumpShake.luau.",
+                         "Evidence":  "Default/GrappleJumpShake.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-longrangeabovegrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/LongRangeAboveGrab.luau.",
+                         "Evidence":  "Default/LongRangeAboveGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-longrangegrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/LongRangeGrab.luau.",
+                         "Evidence":  "Default/LongRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-mediumrangegrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/MediumRangeGrab.luau.",
+                         "Evidence":  "Default/MediumRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-napegrabattack-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/NapeGrabAttack.luau.",
+                         "Evidence":  "Default/NapeGrabAttack.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-shortrangeattackground-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/ShortRangeAttackGround.luau.",
+                         "Evidence":  "Default/ShortRangeAttackGround.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-shortrangefrontarmgrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/ShortRangeFrontArmGrab.luau.",
+                         "Evidence":  "Default/ShortRangeFrontArmGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-shortrangegrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/ShortRangeGrab.luau.",
+                         "Evidence":  "Default/ShortRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-shortrangegrableg-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/ShortRangeGrabLeg.luau.",
+                         "Evidence":  "Default/ShortRangeGrabLeg.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-shortrangeswat-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/ShortRangeSwat.luau.",
+                         "Evidence":  "Default/ShortRangeSwat.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-sidewaysgrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/SidewaysGrab.luau.",
+                         "Evidence":  "Default/SidewaysGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:default-widerangegrab-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Default/WideRangeGrab.luau.",
+                         "Evidence":  "Default/WideRangeGrab.luau"
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Id":  "action:sound-policy:idiocy-mediumrangeattackground-luau",
+                         "Area":  "Effects",
+                         "Detail":  "Movement sound policy matches Requiem for Idiocy/MediumRangeAttackGround.luau.",
+                         "Evidence":  "Idiocy/MediumRangeAttackGround.luau"
+                     }
+                 ]
+}

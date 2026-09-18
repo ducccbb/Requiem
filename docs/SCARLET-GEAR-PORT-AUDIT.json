@@ -1,0 +1,406 @@
+{
+    "Summary":  {
+                    "Pass":  66,
+                    "Error":  0,
+                    "Info":  0,
+                    "Area":  "Gear"
+                },
+    "Findings":  [
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Movement/init.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Movement/Constants.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Movement/Slacking.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Movement/WallInteraction.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Movement/PlayerSlide.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Movement/Sliding.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/Grapples.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/ODMG/init.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/StarterPlayer/StarterPlayerScripts/Framework/Modules/Runtime/GearRuntime.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/ServerScriptService/Framework/Modules/Individual/Data/Default.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/ReplicatedStorage/Client/User/Equipment/Gear/Components/Ejector/Default.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/ReplicatedStorage/Client/User/Equipment/Gear/Components/Winches/Default.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/ReplicatedStorage/Client/User/Equipment/Gear/Components/Gyroscope/Default.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "file:src/ReplicatedStorage/Client/User/Equipment/Gear/Components/Housing/Default.luau",
+                         "Detail":  "File exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "pipeline:requiem-controller",
+                         "Detail":  "ODMG loads the Requiem movement controller."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "pipeline:requiem-step",
+                         "Detail":  "CoreStep delegates physics to Requiem movement."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:module",
+                         "Detail":  "The current Requiem momentum-slide controller is loaded."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:construct",
+                         "Detail":  "The momentum-slide controller is instantiated, not left as dead code."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:handoff",
+                         "Detail":  "Final grapple release hands GearVelocity/GearGyro to the slide solver."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:step",
+                         "Detail":  "The active scheduler steps coast momentum."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:velocity",
+                         "Detail":  "Momentum slide owns dedicated coast velocity."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:gyro",
+                         "Detail":  "Momentum slide owns dedicated coast orientation."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "state:grappling",
+                         "Detail":  "Grapple ownership is published to Scarlet States."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "state:sliding",
+                         "Detail":  "Slide ownership is published to Scarlet States."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "momentum-slide:release-order",
+                         "Detail":  "Release preserves SLIDING until coast physics captures the gear movers."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "pipeline:legacy-step",
+                         "Detail":  "Forbidden marker absent: Legacy Scarlet GearType movement is still active."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "gas:exact-call",
+                         "Detail":  "Requiem movement uses exact gas consumption without Scarlet double-throttling."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "gas:exact-api",
+                         "Detail":  "ODMG exposes exact gas consumption while retaining the legacy caller contract."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "runtime:reeling",
+                         "Detail":  "Runtime reeling is sourced from live movement state."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "runtime:slacking",
+                         "Detail":  "Runtime slacking is sourced from live movement state."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "runtime:snapshot",
+                         "Detail":  "GearRuntime exposes slacking without internal ODMG reads."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "constant:BASE_SPEED",
+                         "Detail":  "Requiem neutral constant BASE_SPEED is defined."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "constant:BASE_GAS_BOOST",
+                         "Detail":  "Requiem neutral constant BASE_GAS_BOOST is defined."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "constant:TOTAL_TIME_FOR_MAX_VELOCITY",
+                         "Detail":  "Requiem neutral constant TOTAL_TIME_FOR_MAX_VELOCITY is defined."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "constant:MAXIMUM_VELOCITY_MULTIPLIER",
+                         "Detail":  "Requiem neutral constant MAXIMUM_VELOCITY_MULTIPLIER is defined."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "constant:BASE_REEL_BOOST",
+                         "Detail":  "Requiem neutral constant BASE_REEL_BOOST is defined."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "constant:MAX_VELOCITY_REEL_BOOST",
+                         "Detail":  "Requiem neutral constant MAX_VELOCITY_REEL_BOOST is defined."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "movement:function Movement:SetReeling",
+                         "Detail":  "Movement contains function Movement:SetReeling."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "movement:function Movement:SetSlacking",
+                         "Detail":  "Movement contains function Movement:SetSlacking."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "movement:function Movement:_stepRelease",
+                         "Detail":  "Movement contains function Movement:_stepRelease."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "movement:function Movement:_applyGearVelocity",
+                         "Detail":  "Movement contains function Movement:_applyGearVelocity."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "movement:BodyVelocity",
+                         "Detail":  "Movement contains BodyVelocity."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "movement:BodyGyro",
+                         "Detail":  "Movement contains BodyGyro."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "slacking:constraint",
+                         "Detail":  "Slacking uses Requiem-style physical rope constraint."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "wall:run",
+                         "Detail":  "Wall-running entry logic exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "wall:hang",
+                         "Detail":  "Wall-hanging interaction exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "animation:movement-adapter",
+                         "Detail":  "Movement uses Scarlet\u0027s existing animation facade rather than a second animator stack."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "animation:slide",
+                         "Detail":  "Ground slide animation is restored from the Requiem grappling branch."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "animation:orbit",
+                         "Detail":  "Orbit action/idle animation transitions are restored."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "animation:wall",
+                         "Detail":  "Wall-run animation is bound to wall-run lifecycle."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "orbit:direct-input",
+                         "Detail":  "Orbit direction reads live A/D input like Requiem."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "orbit:vertical-input",
+                         "Detail":  "Requiem directional input keeps the S downward component."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "wall:space-input",
+                         "Detail":  "Wall-run uses Space input, not gas-boost state."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "release:slide-decay",
+                         "Detail":  "Release momentum includes Requiem\u0027s delayed slide-particle decay window."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "release:body-force",
+                         "Detail":  "Release momentum preserves Requiem low-speed gravity compensation."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "release:immediate-hook",
+                         "Detail":  "Final grapple release starts momentum at the goal=nil boundary."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "slide:controller",
+                         "Detail":  "LeftControl has the separate Requiem ClientSlideMovement controller."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "slide:ground-slope",
+                         "Detail":  "Player slide validates slope angle like Requiem."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "slide:obstacle",
+                         "Detail":  "Player slide cancels on the forward obstacle ray."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "slide:velocity",
+                         "Detail":  "Player slide starts with Requiem 1.3x horizontal momentum."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "slide:input-conflict",
+                         "Detail":  "LeftControl routes to player slide when no grapple goal exists."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "effects:grapple",
+                         "Detail":  "Normal grapple and gas boost particles are mutually exclusive."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "effects:slide",
+                         "Detail":  "Ground slide owns its particle lifecycle."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "conflict:slacking",
+                         "Detail":  "Slacking/wall/release branches clear conflicting gear effects."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "keybind:reeling",
+                         "Detail":  "Reeling defaults to Requiem LeftShift."
+                     },
+                     {
+                         "Severity":  "PASS",
+                         "Area":  "Gear",
+                         "Check":  "keybind:slacking",
+                         "Detail":  "Slacking defaults to Requiem LeftControl."
+                     }
+                 ]
+}

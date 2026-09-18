@@ -1,0 +1,187 @@
+-- Saved by UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw
+
+--[[
+__________                   __               __    __________              .__
+\______   \_______  ____    |__| ____   _____/  |_  \______   \ ____ _____  |  |
+ |     ___/\_  __ \/  _ \   |  |/ __ \_/ ___\   __\  |       _// __ \\__  \ |  |
+ |    |     |  | \(  <_> )  |  \  ___/\  \___|  |    |    |   \  ___/ / __ \|  |__
+ |____|     |__|   \____/\__|  |\___  >\___  >__|    |____|_  /\___  >____  /____/
+                        \______|    \/     \/               \/     \/     \/
+]]
+--                           Project Real  |  Luau Decompiler
+--                                   Made by @zinvera
+--                  File: ReplicatedStorage.Common.Customization.Shirts
+--                              Dumped in 0.000705 seconds
+--                          Bytecode version 9  |  1 functions
+
+script = nil
+local v1 = getfenv(0)
+v1.script = nil
+_G.script = nil
+v1 = getfenv(0)
+v1.getfenv = nil
+v1 = {}
+local v2 = {}
+v2["White Shirt"] = "http://www.roblox.com/asset/?id=104260775229969"
+v2["Grey Shirt"] = "http://www.roblox.com/asset/?id=116190785949475"
+v2["Black Shirt"] = "http://www.roblox.com/asset/?id=73810316289041"
+v2["Blue Shirt"] = "http://www.roblox.com/asset/?id=82089596855198"
+v2["Brown Shirt"] = "http://www.roblox.com/asset/?id=97560353963110"
+v2["Green Shirt"] = "http://www.roblox.com/asset/?id=120138737892244"
+v2["Red Shirt"] = "http://www.roblox.com/asset/?id=97231122181883"
+v2["Rolled White Shirt"] = "http://www.roblox.com/asset/?id=115377154405882"
+v2["Rolled Grey Shirt"] = "http://www.roblox.com/asset/?id=112527174729178"
+v2["Rolled Black Shirt"] = "http://www.roblox.com/asset/?id=97120316924290"
+v2["Rolled Blue Shirt"] = "http://www.roblox.com/asset/?id=94482595517080"
+v2["Rolled Brown Shirt"] = "http://www.roblox.com/asset/?id=75767475406971"
+v2["Rolled Green Shirt"] = "http://www.roblox.com/asset/?id=111101854749225"
+v2["Rolled Red Shirt"] = "http://www.roblox.com/asset/?id=82499635538504"
+v2["Open White Shirt"] = "http://www.roblox.com/asset/?id=112499768427393"
+v2["Open Grey Shirt"] = "http://www.roblox.com/asset/?id=80791022573936"
+v2["Open Black Shirt"] = "http://www.roblox.com/asset/?id=84444638362030"
+v2["Open Blue Shirt"] = "http://www.roblox.com/asset/?id=74021848957352"
+v2["Open Brown Shirt"] = "http://www.roblox.com/asset/?id=74180061530762"
+v2["Open Green Shirt"] = "http://www.roblox.com/asset/?id=84162521448613"
+v2["Open Red Shirt"] = "http://www.roblox.com/asset/?id=109402362276918"
+v2["Open, Rolled White Shirt"] = "http://www.roblox.com/asset/?id=83483431600615"
+v2["Open, Rolled Grey Shirt"] = "http://www.roblox.com/asset/?id=136351436424597"
+v2["Open, Rolled Black Shirt"] = "http://www.roblox.com/asset/?id=124082468179426"
+v2["Open, Rolled Blue Shirt"] = "http://www.roblox.com/asset/?id=125196196820433"
+v2["Open, Rolled Brown Shirt"] = "http://www.roblox.com/asset/?id=72458907565758"
+v2["Open, Rolled Green Shirt"] = "http://www.roblox.com/asset/?id=131464163137215"
+v2["Open, Rolled Red Shirt"] = "http://www.roblox.com/asset/?id=110402264160797"
+v2["White Hoodie"] = "http://www.roblox.com/asset/?id=111085741691406"
+v2["Grey Hoodie"] = "http://www.roblox.com/asset/?id=112099875869265"
+v2["Black Hoodie"] = "http://www.roblox.com/asset/?id=137986947888056"
+v2["Blue Hoodie"] = "http://www.roblox.com/asset/?id=71013185803752"
+v2["Brown Hoodie"] = "http://www.roblox.com/asset/?id=127573415294058"
+v2["Green Hoodie"] = "http://www.roblox.com/asset/?id=118374972446005"
+v2["Red Hoodie"] = "http://www.roblox.com/asset/?id=121660591835934"
+v1.Civilian = v2
+v2 = {}
+v2["Strapped White Shirt"] = "http://www.roblox.com/asset/?id=116065188212383"
+v2["Strapped Grey Shirt"] = "http://www.roblox.com/asset/?id=139008279628507"
+v2["Strapped Black Shirt"] = "http://www.roblox.com/asset/?id=124380765087128"
+v2["Strapped Blue Shirt"] = "http://www.roblox.com/asset/?id=111642224057497"
+v2["Strapped Brown Shirt"] = "http://www.roblox.com/asset/?id=117766049065048"
+v2["Strapped Green Shirt"] = "http://www.roblox.com/asset/?id=81099609970644"
+v2["Strapped Red Shirt"] = "http://www.roblox.com/asset/?id=139103240596651"
+v2["Strapped Opened White Shirt"] = "http://www.roblox.com/asset/?id=102932905154280"
+v2["Strapped Opened Grey Shirt"] = "http://www.roblox.com/asset/?id=118456231585007"
+v2["Strapped Opened Black Shirt"] = "http://www.roblox.com/asset/?id=79943806198579"
+v2["Strapped Opened Blue Shirt"] = "http://www.roblox.com/asset/?id=116356031009467"
+v2["Strapped Opened Brown Shirt"] = "http://www.roblox.com/asset/?id=109565587497873"
+v2["Strapped Opened Green Shirt"] = "http://www.roblox.com/asset/?id=91709043520827"
+v2["Strapped Opened Red Shirt"] = "http://www.roblox.com/asset/?id=106423090725533"
+v2["Strapped, Rolled White Shirt"] = "http://www.roblox.com/asset/?id=114940457569381"
+v2["Strapped, Rolled Grey Shirt"] = "http://www.roblox.com/asset/?id=111406837817085"
+v2["Strapped, Rolled Black Shirt"] = "http://www.roblox.com/asset/?id=110943233009019"
+v2["Strapped, Rolled Blue Shirt"] = "http://www.roblox.com/asset/?id=78448665177608"
+v2["Strapped, Rolled Brown Shirt"] = "http://www.roblox.com/asset/?id=137246082953582"
+v2["Strapped, Rolled Green Shirt"] = "http://www.roblox.com/asset/?id=107889943200398"
+v2["Strapped, Rolled Red Shirt"] = "http://www.roblox.com/asset/?id=77774172107176"
+v2["Strapped, Rolled Opened White Shirt"] = "http://www.roblox.com/asset/?id=76294382954519"
+v2["Strapped, Rolled Opened Grey Shirt"] = "http://www.roblox.com/asset/?id=126454082769571"
+v2["Strapped, Rolled Opened Black Shirt"] = "http://www.roblox.com/asset/?id=95533799734887"
+v2["Strapped, Rolled Opened Blue Shirt"] = "http://www.roblox.com/asset/?id=103616296892618"
+v2["Strapped, Rolled Opened Brown Shirt"] = "http://www.roblox.com/asset/?id=86525548060585"
+v2["Strapped, Rolled Opened Green Shirt"] = "http://www.roblox.com/asset/?id=137430678174399"
+v2["Strapped, Rolled Opened Red Shirt"] = "http://www.roblox.com/asset/?id=84888274554461"
+v2["Strapped White Hoodie"] = "http://www.roblox.com/asset/?id=109647489135239"
+v2["Strapped Grey Hoodie"] = "http://www.roblox.com/asset/?id=82420403687083"
+v2["Strapped Black Hoodie"] = "http://www.roblox.com/asset/?id=133137870607322"
+v2["Strapped Blue Hoodie"] = "http://www.roblox.com/asset/?id=78840802849576"
+v2["Strapped Brown Hoodie"] = "http://www.roblox.com/asset/?id=138044426834192"
+v2["Strapped Green Hoodie"] = "http://www.roblox.com/asset/?id=120681104932484"
+v2["Strapped Red Hoodie"] = "http://www.roblox.com/asset/?id=85614882570390"
+v1.Offduty = v2
+v2 = {}
+v2["Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=113449723298845"
+v2["Military Jacket, Brown, White Hoodie"] = "http://www.roblox.com/asset/?id=80025230485891"
+v2["Military Jacket, Brown, Grey Hoodie"] = "http://www.roblox.com/asset/?id=119767457550305"
+v2["Military Jacket, Brown, Black Hoodie"] = "http://www.roblox.com/asset/?id=120739005874245"
+v2["Military Jacket, Brown, Blue Hoodie"] = "http://www.roblox.com/asset/?id=133327318164899"
+v2["Military Jacket, Brown, Brown Hoodie"] = "http://www.roblox.com/asset/?id=85620565219786"
+v2["Military Jacket, Brown, Green Hoodie"] = "http://www.roblox.com/asset/?id=127151881741719"
+v2["Military Jacket, Brown, Red Hoodie"] = "http://www.roblox.com/asset/?id=120792846180060"
+v2["Short Sleeve Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=118096203828906"
+v2["Short Sleeve Military Jacket, Brown, White Hoodie"] = "http://www.roblox.com/asset/?id=126558711603634"
+v2["Short Sleeve Military Jacket, Brown, Grey Hoodie"] = "http://www.roblox.com/asset/?id=137982818931956"
+v2["Short Sleeve Military Jacket, Brown, Black Hoodie"] = "http://www.roblox.com/asset/?id=102887532026090"
+v2["Short Sleeve Military Jacket, Brown, Blue Hoodie"] = "http://www.roblox.com/asset/?id=70528753562398"
+v2["Short Sleeve Military Jacket, Brown, Brown Hoodie"] = "http://www.roblox.com/asset/?id=125577190431324"
+v2["Short Sleeve Military Jacket, Brown, Green Hoodie"] = "http://www.roblox.com/asset/?id=121974714164350"
+v2["Short Sleeve Military Jacket, Brown, Red Hoodie"] = "http://www.roblox.com/asset/?id=121787054692510"
+v2["Military Jacket, Black"] = "http://www.roblox.com/asset/?id=79953596512476"
+v2["Short Sleeve Military Jacket, Black"] = "http://www.roblox.com/asset/?id=116004241912761"
+v2["Military Trenchcoat, Brown"] = "http://www.roblox.com/asset/?id=134299331068512"
+v2["Military Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=82049418908699"
+v2["Stationary Guard Formal"] = "http://www.roblox.com/asset/?id=128697857690849"
+v1["Stationary Guard"] = v2
+v2 = {}
+v2["Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=92213423960490"
+v2["Military Jacket, Brown, White Hoodie"] = "http://www.roblox.com/asset/?id=89037850127368"
+v2["Military Jacket, Brown, Grey Hoodie"] = "http://www.roblox.com/asset/?id=96253055587213"
+v2["Military Jacket, Brown, Black Hoodie"] = "http://www.roblox.com/asset/?id=101464584451799"
+v2["Military Jacket, Brown, Blue Hoodie"] = "http://www.roblox.com/asset/?id=83484620280140"
+v2["Military Jacket, Brown, Brown Hoodie"] = "http://www.roblox.com/asset/?id=111990061675905"
+v2["Military Jacket, Brown, Green Hoodie"] = "http://www.roblox.com/asset/?id=88262018048978"
+v2["Military Jacket, Brown, Red Hoodie"] = "http://www.roblox.com/asset/?id=125952707504916"
+v2["Short Sleeve Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=98659311272480"
+v2["Short Sleeve Military Jacket, Brown, White Hoodie"] = "http://www.roblox.com/asset/?id=98128398226641"
+v2["Short Sleeve Military Jacket, Brown, Grey Hoodie"] = "http://www.roblox.com/asset/?id=106553845337518"
+v2["Short Sleeve Military Jacket, Brown, Black Hoodie"] = "http://www.roblox.com/asset/?id=96634469176653"
+v2["Short Sleeve Military Jacket, Brown, Blue Hoodie"] = "http://www.roblox.com/asset/?id=72572498804187"
+v2["Short Sleeve Military Jacket, Brown, Brown Hoodie"] = "http://www.roblox.com/asset/?id=131272814518246"
+v2["Short Sleeve Military Jacket, Brown, Green Hoodie"] = "http://www.roblox.com/asset/?id=118669821617426"
+v2["Short Sleeve Military Jacket, Brown, Red Hoodie"] = "http://www.roblox.com/asset/?id=99269629470550"
+v2["TOS Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=110139140391477"
+v2["Short Sleeve TOS Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=90965984057662"
+v2["Military Jacket, Black"] = "http://www.roblox.com/asset/?id=72728880851962"
+v2["Short Sleeve Military Jacket, Black"] = "http://www.roblox.com/asset/?id=92656356677114"
+v2["Military Trenchcoat, Brown"] = "http://www.roblox.com/asset/?id=99841267208464"
+v2["Military Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=118468606984585"
+v2["Military Police Formal"] = "http://www.roblox.com/asset/?id=118539495534986"
+v1["Military Police"] = v2
+v2 = {}
+v2["Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=139632986574710"
+v2["Military Jacket, Brown, White Hoodie"] = "http://www.roblox.com/asset/?id=128865095654165"
+v2["Military Jacket, Brown, Grey Hoodie"] = "http://www.roblox.com/asset/?id=87309769758982"
+v2["Military Jacket, Brown, Black Hoodie"] = "http://www.roblox.com/asset/?id=100327660220936"
+v2["Military Jacket, Brown, Blue Hoodie"] = "http://www.roblox.com/asset/?id=136740847589819"
+v2["Military Jacket, Brown, Brown Hoodie"] = "http://www.roblox.com/asset/?id=109389207874781"
+v2["Military Jacket, Brown, Green Hoodie"] = "http://www.roblox.com/asset/?id=128440941585191"
+v2["Military Jacket, Brown, Red Hoodie"] = "http://www.roblox.com/asset/?id=105073081850197"
+v2["Short Sleeve Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=76054755241873"
+v2["Short Sleeve Military Jacket, Brown, White Hoodie"] = "http://www.roblox.com/asset/?id=74607366744178"
+v2["Short Sleeve Military Jacket, Brown, Grey Hoodie"] = "http://www.roblox.com/asset/?id=119643423128025"
+v2["Short Sleeve Military Jacket, Brown, Black Hoodie"] = "http://www.roblox.com/asset/?id=112222160321480"
+v2["Short Sleeve Military Jacket, Brown, Blue Hoodie"] = "http://www.roblox.com/asset/?id=135052146665726"
+v2["Short Sleeve Military Jacket, Brown, Brown Hoodie"] = "http://www.roblox.com/asset/?id=86362954275348"
+v2["Short Sleeve Military Jacket, Brown, Green Hoodie"] = "http://www.roblox.com/asset/?id=91362113244886"
+v2["Short Sleeve Military Jacket, Brown, Red Hoodie"] = "http://www.roblox.com/asset/?id=72456510962627"
+v2["Military Jacket, Black"] = "http://www.roblox.com/asset/?id=132628818348271"
+v2["Short Sleeve Military Jacket, Black"] = "http://www.roblox.com/asset/?id=109567104403905"
+v2["Military Trenchcoat, Brown"] = "http://www.roblox.com/asset/?id=87282812640599"
+v2["Military Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=96130858332375"
+v2["Scouting Legion Formal"] = "http://www.roblox.com/asset/?id=74303188644860"
+v2["Recon Command Jacket, Black"] = "http://www.roblox.com/asset/?id=128698411318656"
+v2["Assault Command Jacket, Black"] = "http://www.roblox.com/asset/?id=131897944541899"
+v2["Support Command Jacket, Black"] = "http://www.roblox.com/asset/?id=74773869783689"
+v2["Recon Command Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=91522260528469"
+v2["Assault Command Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=107654536354684"
+v2["Support Command Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=134807452395217"
+v1["Scouting Legion"] = v2
+v2 = {}
+v2["Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=79735693488227"
+v2["Short Sleeve Military Jacket, Brown"] = "http://www.roblox.com/asset/?id=92200319356634"
+v2["Trainee Corps Formal"] = "http://www.roblox.com/asset/?id=94172950695615"
+v2["Instructor Trenchcoat, Brown"] = "http://www.roblox.com/asset/?id=103474578190927"
+v2["Instructor Trenchcoat, Grey"] = "http://www.roblox.com/asset/?id=82877529010185"
+v2["Instructor Trenchcoat, Black"] = "http://www.roblox.com/asset/?id=90079182065600"
+v2["Instructor Trenchcoat, Brown w/Tie"] = "http://www.roblox.com/asset/?id=102547795313401"
+v2["Instructor Trenchcoat, Grey w/Tie"] = "http://www.roblox.com/asset/?id=70934014243774"
+v2["Instructor Trenchcoat, Black w/Tie"] = "http://www.roblox.com/asset/?id=98941800676614"
+v2["Instructor Formal"] = "http://www.roblox.com/asset/?id=77444639012792"
+v1["Trainee Corps"] = v2
+return v1
