@@ -4032,6 +4032,75 @@ local TabAdvancedAuto = Window:CreateTab({
 
 TabAdvancedAuto:CreateSection("🎮 Auto Minigames (VIM Mô Phỏng Người Thật)")
 
+TabAdvancedAuto:CreateButton({
+    Name = "Mở Menu Huấn Luyện Gear (Trainer UI)",
+    Description = "Bắt buộc mở giao diện thăng bằng ODMG (Drum & Rhythm) ở bất cứ đâu, bỏ qua khóa ghế tập",
+    Callback = function()
+        pcall(function()
+            local State = StateModule
+            if not State then
+                local Common = ReplicatedStorage:WaitForChild("Common")
+                local Utilities = Common:WaitForChild("Utilities")
+                State = require(Utilities:WaitForChild("State"))
+            end
+            local setTrainer = State("trainer")
+            setTrainer({visible = true})
+            if Luna and typeof(Luna.Notification) == "function" then
+                Luna:Notification({
+                    Title = "Gear Trainer",
+                    Content = "Đã mở giao diện Huấn Luyện Bộ Cơ Động ODMG!",
+                    Icon = "sports_esports",
+                    ImageSource = "Material"
+                })
+            end
+        end)
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "Đóng Menu Huấn Luyện Gear",
+    Description = "Tắt giao diện menu huấn luyện nếu không còn sử dụng",
+    Callback = function()
+        pcall(function()
+            local State = StateModule
+            if not State then
+                local Common = ReplicatedStorage:WaitForChild("Common")
+                local Utilities = Common:WaitForChild("Utilities")
+                State = require(Utilities:WaitForChild("State"))
+            end
+            local setTrainer = State("trainer")
+            setTrainer({visible = false})
+        end)
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "⚡ Hoàn Thành Minigame Nhận 1,300 EXP (Instant)",
+    Description = "Gửi trực tiếp gói hoàn thành bài tập Drumming lên Server nhận ngay 1,300 EXP",
+    Callback = function()
+        pcall(function()
+            local GN = GearNamespace
+            if not GN then
+                local Common = ReplicatedStorage:WaitForChild("Common")
+                local Network = Common:WaitForChild("Network")
+                local Namespaces = Network:WaitForChild("Namespaces")
+                GN = require(Namespaces:WaitForChild("Gear"))
+            end
+            if GN and GN.Score then
+                GN.Score.post({score = 100, type = "Drumming Game"})
+                if Luna and typeof(Luna.Notification) == "function" then
+                    Luna:Notification({
+                        Title = "Gear Trainer EXP",
+                        Content = "Đã gửi gói hoàn thành Minigame (+1,300 EXP)!",
+                        Icon = "bolt",
+                        ImageSource = "Material"
+                    })
+                end
+            end
+        end)
+    end
+})
+
 TabAdvancedAuto:CreateToggle({
     Name = "Auto Balance Drum (Phím Q/E)",
     Description = "Tự động bấm Q/E qua VIM khi nốt nhịp tiến vào vạch tâm (PERFECT 100%)",
