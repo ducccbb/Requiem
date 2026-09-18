@@ -36,6 +36,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
+local TeleportService = game:GetService("TeleportService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -4030,11 +4031,327 @@ local TabAdvancedAuto = Window:CreateTab({
     ShowTitle = true
 })
 
-TabAdvancedAuto:CreateSection("🎮 Auto Minigames (VIM Mô Phỏng Người Thật)")
+TabAdvancedAuto:CreateSection("🎯 Gear Trainer & Bùa Rhythmatic (Chuẩn Server Session)")
+
+-- Helper: Kiểm tra môi trường Server cho Trainer
+local function checkTrainerEnvironment()
+    local placeId = game.PlaceId
+    local isExam = (placeId == 83774503107238)
+    local isSupporter = (placeId == 101741397355453)
+    local eventNum = 0
+    pcall(function()
+        local Common = ReplicatedStorage:WaitForChild("Common")
+        local Network = Common:WaitForChild("Network")
+        local Namespaces = Network:WaitForChild("Namespaces")
+        local ServerNs = require(Namespaces:WaitForChild("Server"))
+        if ServerNs and ServerNs.Store then
+            local clientStore = ServerNs.Store.client()
+            if clientStore and clientStore.event then
+                eventNum = clientStore.event
+            end
+        end
+    end)
+    local isAllowed = isExam or isSupporter or (eventNum ~= 0)
+    local mapName = "Khác"
+    if isExam then
+        mapName = "Trường Huấn Luyện (Exam Place)"
+    elseif placeId == 118528263656126 then
+        mapName = "Thế Giới Chính (World)"
+    elseif placeId == 18126170981 then
+        mapName = "Sảnh Chờ (Lobby)"
+    end
+    return isAllowed, mapName, eventNum, isExam
+end
+
+-- Helper: Tìm ghế Gear Trainer gần nhất
+local function findNearestTrainerSeat()
+    local char = LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    local myPos = hrp and hrp.Position or Vector3.zero
+
+    local bestSeat = nil
+    local bestDist = math.huge
+    local totalSeats = 0
+
+    -- 1. Quét CollectionService Tag "Interaction"
+    local tagged = CollectionService:GetTagged("Interaction")
+    for _, obj in ipairs(tagged) do
+        if obj:IsDescendantOf(Workspace) then
+            local isTrainer = obj:GetAttribute("Type") == "Trainer" or string.find(string.lower(obj.Name), "trainer")
+            if isTrainer then
+                local seat = obj:IsA("Seat") and obj or obj:FindFirstChildWhichIsA("Seat", true)
+                if seat then
+                    totalSeats = totalSeats + 1
+                    if not seat.Occupant then
+                        local dist = (seat.Position - myPos).Magnitude
+                        if dist < bestDist then
+                            bestDist = dist
+                            bestSeat = seat
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    -- 2. Quét dự phòng toàn bộ Workspace
+    if not bestSeat then
+        for _, desc in ipairs(Workspace:GetDescendants()) do
+            if desc:IsA("Seat") then
+                local parentName = desc.Parent and string.lower(desc.Parent.Name) or ""
+                local selfName = string.lower(desc.Name)
+                local isTrainer = desc:GetAttribute("Type") == "Trainer" or string.find(parentName, "trainer") or string.find(selfName, "trainer")
+                if isTrainer then
+                    totalSeats = totalSeats + 1
+                    if not desc.Occupant then
+                        local dist = (desc.Position - myPos).Magnitude
+                        if dist < bestDist then
+                            bestDist = dist
+                            bestSeat = desc
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return bestSeat, bestDist, totalSeats
+end
 
 TabAdvancedAuto:CreateButton({
-    Name = "Mở Menu Huấn Luyện Gear (Trainer UI)",
-    Description = "Bắt buộc mở giao diện thăng bằng ODMG (Drum & Rhythm) ở bất cứ đâu, bỏ qua khóa ghế tập",
+    Name = "🔍 Kiểm Tra Trạng Thái Server & Ghế Tập",
+    Description = "Kiểm tra xem Server hiện tại có cho phép tập Gear không và tìm ghế trống quanh nhân vật",
+    Callback = function()
+        local isAllowed, mapName, eventNum, isExam = checkTrainerEnvironment()
+        local bestSeat, bestDist, totalSeats = findNearestTrainerSeat()
+
+        local statusText = ""
+        if isExam then
+            statusText = "✅ Map Exam: Trainer MỞ 24/7!"
+        elseif isAllowed then
+            statusText = string.format("✅ Map chính: Đang có Event (%d)! Trainer KHẢ DỤNG.", eventNum)
+        else
+            statusText = "⚠️ Map chính: KHÔNG có Event! Server sẽ từ chối ghế tập. Hãy sang Exam Place."
+        end
+
+        local seatText = bestSeat and string.format("Tìm thấy %d ghế (Ghế trống gần nhất: %.1f studs)", totalSeats, bestDist) or "Không tìm thấy ghế trống nào ở gần!"
+
+        if Luna and typeof(Luna.Notification) == "function" then
+            Luna:Notification({
+                Title = "Kiểm Tra Trainer",
+                Content = string.format("[%s]\n%s\n%s", mapName, statusText, seatText),
+                Icon = "info",
+                ImageSource = "Material"
+            })
+        end
+        print(string.format("[Requiem Hub] Trainer Check: Map = %s | Allowed = %s | Event = %d | Seats = %d", mapName, tostring(isAllowed), eventNum, totalSeats))
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "🚀 Dịch Chuyển Sang Exam Place (Tập 24/7)",
+    Description = "Dịch chuyển sang Trường Huấn Luyện (Place ID 83774503107238) nơi máy tập luôn mở 24/7",
+    Callback = function()
+        if Luna and typeof(Luna.Notification) == "function" then
+            Luna:Notification({
+                Title = "Dịch Chuyển Exam Place",
+                Content = "Đang chuyển server sang Trường Huấn Luyện...",
+                Icon = "flight_takeoff",
+                ImageSource = "Material"
+            })
+        end
+        task.wait(0.5)
+        pcall(function()
+            TeleportService:Teleport(83774503107238, LocalPlayer)
+        end)
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "🤖 Auto Farm Trainer (Rhythm Game +1,300 EXP)",
+    Description = "Tự động bay đến ghế trống -> Gửi handshake ngồi ghế -> Chờ Server cấp Session -> Gửi điểm Rhythm Game -> Nhận Bùa & 1,300 EXP",
+    Callback = function()
+        task.spawn(function()
+            local isAllowed, mapName, eventNum, isExam = checkTrainerEnvironment()
+            if not isAllowed then
+                if Luna and typeof(Luna.Notification) == "function" then
+                    Luna:Notification({
+                        Title = "Server Chặn Ghế Tập!",
+                        Content = "Map hiện tại không có Event! Vui lòng bấm 'Dịch Chuyển Sang Exam Place' để tập.",
+                        Icon = "warning",
+                        ImageSource = "Material"
+                    })
+                end
+                return
+            end
+
+            local bestSeat, bestDist, totalSeats = findNearestTrainerSeat()
+            if not bestSeat then
+                if Luna and typeof(Luna.Notification) == "function" then
+                    Luna:Notification({
+                        Title = "Không Tìm Thấy Ghế!",
+                        Content = "Không tìm thấy ghế Gear Trainer trống nào trong khu vực này.",
+                        Icon = "chair",
+                        ImageSource = "Material"
+                    })
+                end
+                return
+            end
+
+            local char = LocalPlayer.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChildWhichIsA("Humanoid")
+            if not hrp or not hum then return end
+
+            if Luna and typeof(Luna.Notification) == "function" then
+                Luna:Notification({
+                    Title = "Đang Tiếp Cận Ghế Tập",
+                    Content = string.format("Đang dịch chuyển tới ghế (cách %.1f studs)...", bestDist),
+                    Icon = "directions_run",
+                    ImageSource = "Material"
+                })
+            end
+
+            -- 1. Dịch chuyển tới sát ghế
+            hrp.CFrame = bestSeat.CFrame * CFrame.new(0, 1.5, 0)
+            task.wait(0.3)
+
+            -- 2. Gửi Handshake xin ngồi ghế lên Server
+            local InteractionNs = nil
+            pcall(function()
+                local Common = ReplicatedStorage:WaitForChild("Common")
+                local Network = Common:WaitForChild("Network")
+                local Namespaces = Network:WaitForChild("Namespaces")
+                InteractionNs = require(Namespaces:WaitForChild("Interaction"))
+            end)
+
+            if InteractionNs and InteractionNs.Event then
+                InteractionNs.Event.post(bestSeat)
+            end
+
+            -- 3. Chờ Server xác nhận cho ngồi vào ghế
+            local sat = false
+            local waitStart = tick()
+            while tick() - waitStart < 4 do
+                if hum.SeatPart == bestSeat or bestSeat.Occupant == hum then
+                    sat = true
+                    break
+                end
+                task.wait(0.2)
+            end
+
+            if not sat then
+                -- Thử ngồi trực tiếp phía client nếu server cần trigger vật lý
+                pcall(function()
+                    bestSeat:Sit(hum)
+                end)
+                task.wait(0.5)
+                if hum.SeatPart == bestSeat then
+                    sat = true
+                end
+            end
+
+            if not sat then
+                if Luna and typeof(Luna.Notification) == "function" then
+                    Luna:Notification({
+                        Title = "Không Thể Ngồi Ghế",
+                        Content = "Server không xác nhận tư thế ngồi ghế. Vui lòng thử lại hoặc di chuyển lại gần hơn.",
+                        Icon = "error",
+                        ImageSource = "Material"
+                    })
+                end
+                return
+            end
+
+            if Luna and typeof(Luna.Notification) == "function" then
+                Luna:Notification({
+                    Title = "Đã Vào Phiên Tập!",
+                    Content = "Đã ngồi ghế thành công. Đang giả lập tập luyện và gửi kết quả...",
+                    Icon = "fitness_center",
+                    ImageSource = "Material"
+                })
+            end
+
+            -- 4. Delay 2 giây để server ghi nhận phiên tập hợp lệ
+            task.wait(2)
+
+            -- 5. Gửi gói hoàn thành Rhythm Game nhận Bùa Rhythmatic & 1,300 EXP
+            local GN = GearNamespace
+            if not GN then
+                pcall(function()
+                    local Common = ReplicatedStorage:WaitForChild("Common")
+                    local Network = Common:WaitForChild("Network")
+                    local Namespaces = Network:WaitForChild("Namespaces")
+                    GN = require(Namespaces:WaitForChild("Gear"))
+                end)
+            end
+
+            if GN and GN.Score then
+                GN.Score.post({score = 100, type = "Rhythm Game"})
+            end
+
+            task.wait(0.3)
+
+            -- 6. Giải phóng nhân vật rời khỏi ghế
+            hum.Sit = false
+            hum.Jump = true
+
+            if Luna and typeof(Luna.Notification) == "function" then
+                Luna:Notification({
+                    Title = "Hoàn Tất Tập Luyện! 🎉",
+                    Content = "Đã gửi hoàn thành Rhythm Game! Server ghi nhận 1,300 EXP và mở Bùa Rhythmatic.",
+                    Icon = "military_tech",
+                    ImageSource = "Material"
+                })
+            end
+        end)
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "⚡ Gửi Điểm Nhanh (Khi Đang Tự Ngồi Ghế)",
+    Description = "Gửi ngay 100 điểm Rhythm Game lên Server nếu bạn đã tự ngồi vào ghế tập",
+    Callback = function()
+        local char = LocalPlayer.Character
+        local hum = char and char:FindFirstChildWhichIsA("Humanoid")
+        if not hum or not hum.SeatPart then
+            if Luna and typeof(Luna.Notification) == "function" then
+                Luna:Notification({
+                    Title = "Chưa Ngồi Ghế!",
+                    Content = "Bạn phải ngồi vào ghế Gear Trainer thì Server mới chấp nhận điểm!",
+                    Icon = "warning",
+                    ImageSource = "Material"
+                })
+            end
+            return
+        end
+
+        local GN = GearNamespace
+        if not GN then
+            pcall(function()
+                local Common = ReplicatedStorage:WaitForChild("Common")
+                local Network = Common:WaitForChild("Network")
+                local Namespaces = Network:WaitForChild("Namespaces")
+                GN = require(Namespaces:WaitForChild("Gear"))
+            end)
+        end
+        if GN and GN.Score then
+            GN.Score.post({score = 100, type = "Rhythm Game"})
+            if Luna and typeof(Luna.Notification) == "function" then
+                Luna:Notification({
+                    Title = "Gửi Điểm Thành Công",
+                    Content = "Đã gửi gói Rhythm Game (100 điểm) lên Server!",
+                    Icon = "bolt",
+                    ImageSource = "Material"
+                })
+            end
+        end
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "Mở Menu Huấn Luyện Gear (Trainer UI Thủ Công)",
+    Description = "Mở giao diện thăng bằng ODMG trên màn hình để tự chơi kết hợp Auto Q/E",
     Callback = function()
         pcall(function()
             local State = StateModule
@@ -4070,33 +4387,6 @@ TabAdvancedAuto:CreateButton({
             end
             local setTrainer = State("trainer")
             setTrainer({visible = false})
-        end)
-    end
-})
-
-TabAdvancedAuto:CreateButton({
-    Name = "⚡ Hoàn Thành Minigame Nhận 1,300 EXP (Instant)",
-    Description = "Gửi trực tiếp gói hoàn thành bài tập Drumming lên Server nhận ngay 1,300 EXP",
-    Callback = function()
-        pcall(function()
-            local GN = GearNamespace
-            if not GN then
-                local Common = ReplicatedStorage:WaitForChild("Common")
-                local Network = Common:WaitForChild("Network")
-                local Namespaces = Network:WaitForChild("Namespaces")
-                GN = require(Namespaces:WaitForChild("Gear"))
-            end
-            if GN and GN.Score then
-                GN.Score.post({score = 100, type = "Drumming Game"})
-                if Luna and typeof(Luna.Notification) == "function" then
-                    Luna:Notification({
-                        Title = "Gear Trainer EXP",
-                        Content = "Đã gửi gói hoàn thành Minigame (+1,300 EXP)!",
-                        Icon = "bolt",
-                        ImageSource = "Material"
-                    })
-                end
-            end
         end)
     end
 })
