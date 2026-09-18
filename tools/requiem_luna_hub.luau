@@ -35,12 +35,74 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Mouse = LocalPlayer:GetMouse()
 
 -- =========================================================================
+-- KHẮC PHỤC TRIỆT ĐỂ HIỆU ỨNG BLUR MÀN HÌNH DO LUNA SUITE GÂY RA
+-- =========================================================================
+local function purgeLunaBlur()
+    pcall(function()
+        for _, child in ipairs(Lighting:GetChildren()) do
+            if child:IsA("DepthOfFieldEffect") and (string.sub(child.Name, 1, 4) == "DPT_" or child.NearIntensity > 0) then
+                child.Enabled = false
+                child:Destroy()
+            end
+        end
+    end)
+    pcall(function()
+        local cam = workspace.CurrentCamera
+        if cam then
+            for _, child in ipairs(cam:GetChildren()) do
+                if child.Name == "LunaBlur" then
+                    child:Destroy()
+                end
+            end
+        end
+    end)
+end
+
+-- 1. Quét dọn ngay các hiệu ứng blur tồn đọng từ các lần execute trước
+purgeLunaBlur()
+
+-- 2. Giám sát Lighting để triệt tiêu tức thì bất kỳ DepthOfField nào của Luna
+Lighting.ChildAdded:Connect(function(child)
+    if child:IsA("DepthOfFieldEffect") and (string.sub(child.Name, 1, 4) == "DPT_" or child.NearIntensity > 0) then
+        task.defer(function()
+            pcall(function()
+                child.Enabled = false
+                child:Destroy()
+            end)
+        end)
+    end
+end)
+
+-- 3. Giám sát CurrentCamera để xóa thư mục LunaBlur và các neon wedge mesh
+local function monitorCamera(cam)
+    if not cam then return end
+    cam.ChildAdded:Connect(function(child)
+        if child.Name == "LunaBlur" then
+            task.defer(function()
+                pcall(function() child:Destroy() end)
+            end)
+        end
+    end)
+    for _, child in ipairs(cam:GetChildren()) do
+        if child.Name == "LunaBlur" then
+            pcall(function() child:Destroy() end)
+        end
+    end
+end
+
+monitorCamera(workspace.CurrentCamera)
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+    monitorCamera(workspace.CurrentCamera)
+    purgeLunaBlur()
+end)
+
 -- =========================================================================
 -- KHẮC PHỤC LỖI HTTP 429 VÀ SANITIZE NOTIFICATION CHO LUNA SUITE
 -- =========================================================================
@@ -57,12 +119,36 @@ pcall(function()
     end
 end)
 
+-- Hàm làm sạch mã nguồn Luna trước khi loadstring (vô hiệu hóa BlurModule & checkFriends)
+local function sanitizeLunaSource(src)
+    if typeof(src) ~= "string" then return src end
+    
+    -- Triệt tiêu hoàn toàn BlurModule bên trong Luna (chống tạo DepthOfField & RenderStep neon mesh)
+    if string.find(src, "local function BlurModule(Frame)", 1, true) then
+        src = string.gsub(src, "local function BlurModule%s*%(Frame%)", "local function BlurModule(Frame) return end\nlocal function __OldBlurModule(Frame)")
+    end
+    
+    -- Ngăn chặn spam HTTP 429 từ checkFriends API
+    if string.find(src, "local function checkFriends()", 1, true) then
+        src = string.gsub(src, "local function checkFriends%s*%(%)", "local function checkFriends() return end\nlocal function __OldCheckFriends()")
+    end
+    
+    -- Chống lỗi Image = nil (ContentId expected, got nil) khi gọi Notification
+    if string.find(src, "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)", 1, true) then
+        src = string.gsub(src, "newNotification%.Icon%.Image%s*=%s*GetIcon%(data%.Icon,%s*data%.ImageSource%)", "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource) or \"\"")
+    end
+    
+    return src
+end
+
+-- =========================================================================
 -- NẠP THƯ VIỆN LUNA INTERFACE SUITE
 -- =========================================================================
 local Luna = nil
 
 local loadOk, result = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/master/source.lua"))()
+    local rawSource = game:HttpGet("https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/master/source.lua")
+    return loadstring(sanitizeLunaSource(rawSource))()
 end)
 
 if loadOk and result then
@@ -79,7 +165,7 @@ else
             for _, path in ipairs(possiblePaths) do
                 local ok, content = pcall(readfile, path)
                 if ok and content and #content > 0 then
-                    return loadstring(content)()
+                    return loadstring(sanitizeLunaSource(content))()
                 end
             end
         end
@@ -93,6 +179,9 @@ if not Luna then
     warn("[Requiem Hub] Không thể tải thư viện Luna Interface Suite! Vui lòng kiểm tra kết nối mạng hoặc đường dẫn file.")
     return
 end
+
+-- Đảm bảo xóa sạch blur sau khi Luna khởi tạo
+purgeLunaBlur()
 
 -- Tự động lọc Icon an toàn cho Luna:Notification (chống lỗi ContentId expected, got nil)
 if Luna and typeof(Luna.Notification) == "function" then
