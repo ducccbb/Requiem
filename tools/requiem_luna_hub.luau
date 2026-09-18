@@ -41,6 +41,22 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Mouse = LocalPlayer:GetMouse()
 
 -- =========================================================================
+-- =========================================================================
+-- KHẮC PHỤC LỖI HTTP 429 VÀ SANITIZE NOTIFICATION CHO LUNA SUITE
+-- =========================================================================
+pcall(function()
+    local origGetFriends = Players.GetFriendsAsync
+    Players.GetFriendsAsync = function(self, ...)
+        local success, res = pcall(origGetFriends, self, ...)
+        if success and res then return res end
+        local dummyPages = {}
+        function dummyPages:GetCurrentPage() return {} end
+        function dummyPages:AdvanceToNextPageAsync() end
+        dummyPages.IsFinished = true
+        return dummyPages
+    end
+end)
+
 -- NẠP THƯ VIỆN LUNA INTERFACE SUITE
 -- =========================================================================
 local Luna = nil
@@ -77,6 +93,42 @@ if not Luna then
     warn("[Requiem Hub] Không thể tải thư viện Luna Interface Suite! Vui lòng kiểm tra kết nối mạng hoặc đường dẫn file.")
     return
 end
+
+-- Tự động lọc Icon an toàn cho Luna:Notification (chống lỗi ContentId expected, got nil)
+if Luna and typeof(Luna.Notification) == "function" then
+    local origNotification = Luna.Notification
+    local validIcons = {
+        ["info"] = true, ["check"] = true, ["check_circle"] = true,
+        ["cancel"] = true, ["close"] = true, ["report"] = true,
+        ["priority_high"] = true, ["bolt"] = true, ["security"] = true,
+        ["stars"] = true, ["fitness_center"] = true, ["auto_awesome"] = true,
+        ["gps_fixed"] = true, ["school"] = true, ["colorize"] = true,
+        ["sports_esports"] = true, ["keyboard"] = true, ["near_me"] = true,
+        ["construction"] = true, ["settings"] = true, ["aspect_ratio"] = true,
+        ["hardware"] = true,
+    }
+    Luna.Notification = function(self, data, ...)
+        if type(data) == "table" then
+            data.Icon = data.Icon or "info"
+            data.ImageSource = data.ImageSource or "Material"
+            if data.ImageSource == "Material" and not validIcons[data.Icon] then
+                if data.Icon == "error" then
+                    data.Icon = "cancel"
+                elseif data.Icon == "warning" then
+                    data.Icon = "report"
+                elseif data.Icon == "phishing" or data.Icon == "radar" or data.Icon == "rocket_launch" then
+                    data.Icon = "gps_fixed"
+                elseif data.Icon == "air" then
+                    data.Icon = "bolt"
+                else
+                    data.Icon = "info"
+                end
+            end
+        end
+        return origNotification(self, data, ...)
+    end
+end
+
 
 -- =========================================================================
 -- TẬP HỢP CÁC MODULE CỐT LÕI TỪ REPLICATEDSTORAGE
@@ -818,7 +870,7 @@ if FishingHandler then
             Luna:Notification({
                 Title = "Fishing",
                 Content = "Đã tự động câu dính cá thành công!",
-                Icon = "phishing",
+                Icon = "anchor",
                 ImageSource = "Material"
             })
         end
@@ -1129,7 +1181,7 @@ local function solveCurrentQuiz(isManual)
             Luna:Notification({
                 Title = "Lore Quiz",
                 Content = "Không tìm thấy bài thi Quiz đang mở trên màn hình!",
-                Icon = "error",
+                Icon = "cancel",
                 ImageSource = "Material"
             })
         end
@@ -2016,66 +2068,61 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Hook Metatable Bẻ Cong Raycast & Mouse.Hit (Silent Aim)
-local oldNamecall = nil
-local oldIndex = nil
-
+-- Hook Metatable Bẻ Cong Raycast & Mouse.Hit (Silent Aim) an toàn, cách ly với CameraModule
 pcall(function()
-    if typeof(hookmetamethod) == "function" and typeof(getnamecallmethod) == "function" then
-        -- Hook __namecall (Raycast bẻ cong đạn vào thẳng tâm mục tiêu)
-        oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-            local method = getnamecallmethod()
-            local args = {...}
-
-            if Settings.SilentAimEnabled and not (typeof(checkcaller) == "function" and checkcaller()) then
-                if method == "Raycast" and self == Workspace then
-                    local origin = args[1]
-                    local direction = args[2]
+    -- Hook Workspace.Raycast trực tiếp qua hookfunction thay vì hookmetamethod(game, "__namecall")
+    -- Điều này bảo vệ 100% CameraModule.ZoomController.Popper không bị lỗi Unable to cast Vector3 to bool
+    if typeof(hookfunction) == "function" and typeof(Workspace.Raycast) == "function" then
+        local origRaycast = Workspace.Raycast
+        hookfunction(Workspace.Raycast, function(self, origin, direction, ...)
+            if Settings.SilentAimEnabled and not (typeof(checkcaller) == "function" and checkcaller()) and self == Workspace then
+                if origin and typeof(origin) == "Vector3" and typeof(direction) == "Vector3" then
                     local char = LocalPlayer.Character
-
-                    if char and origin and typeof(origin) == "Vector3" and typeof(direction) == "Vector3" then
-                        local rootPart = char.PrimaryPart or char:FindFirstChild("HumanoidRootPart")
-                        local distToChar = rootPart and (origin - rootPart.Position).Magnitude or 10
-                        if distToChar <= 40 then
-                            local bestTarget = getBestCombatTarget()
-                            if bestTarget then
-                                local targetPos = bestTarget.Position
-                                local aimDir = (targetPos - origin).Unit * direction.Magnitude
-                                args[2] = aimDir
-                                
-                                -- Nếu bắn vào bia ngắm di động, tự động tăng tiến độ Muskets attribute
-                                if bestTarget.Name == "Target" then
-                                    pcall(function()
-                                        Workspace:SetAttribute("Muskets", (Workspace:GetAttribute("Muskets") or 0) + 1)
-                                    end)
-                                end
-                                return oldNamecall(self, table.unpack(args))
+                    local rootPart = char and (char.PrimaryPart or char:FindFirstChild("HumanoidRootPart"))
+                    local distToChar = rootPart and (origin - rootPart.Position).Magnitude or 10
+                    if distToChar <= 40 then
+                        local bestTarget = getBestCombatTarget()
+                        if bestTarget then
+                            local targetPos = bestTarget.Position
+                            local aimDir = (targetPos - origin).Unit * direction.Magnitude
+                            if bestTarget.Name == "Target" then
+                                pcall(function()
+                                    Workspace:SetAttribute("Muskets", (Workspace:GetAttribute("Muskets") or 0) + 1)
+                                end)
                             end
+                            return origRaycast(self, origin, aimDir, ...)
                         end
                     end
                 end
             end
-
-            return oldNamecall(self, ...)
+            return origRaycast(self, origin, direction, ...)
         end)
+    end
 
-        -- Hook __index trên Mouse (Bẻ hướng ngắm cho tất cả hệ thống súng)
-        oldIndex = hookmetamethod(game, "__index", function(self, index)
-            if Settings.SilentAimEnabled and not (typeof(checkcaller) == "function" and checkcaller()) and self == Mouse then
-                if index == "Hit" then
-                    local bestTarget = getBestCombatTarget()
-                    if bestTarget then
-                        return CFrame.new(bestTarget.Position)
-                    end
-                elseif index == "Target" then
-                    local bestTarget = getBestCombatTarget()
-                    if bestTarget then
-                        return bestTarget
+    -- Hook Mouse.Hit / Target an toàn trên metatable riêng của Mouse
+    if typeof(getrawmetatable) == "function" and typeof(setreadonly) == "function" then
+        local mouseMt = getrawmetatable(Mouse)
+        if mouseMt and mouseMt.__index then
+            setreadonly(mouseMt, false)
+            local origMouseIndex = mouseMt.__index
+            mouseMt.__index = function(self, index)
+                if Settings.SilentAimEnabled and not (typeof(checkcaller) == "function" and checkcaller()) and self == Mouse then
+                    if index == "Hit" then
+                        local bestTarget = getBestCombatTarget()
+                        if bestTarget then
+                            return CFrame.new(bestTarget.Position)
+                        end
+                    elseif index == "Target" then
+                        local bestTarget = getBestCombatTarget()
+                        if bestTarget then
+                            return bestTarget
+                        end
                     end
                 end
+                return origMouseIndex(self, index)
             end
-            return oldIndex(self, index)
-        end)
+            setreadonly(mouseMt, true)
+        end
     end
 end)
 
@@ -2986,7 +3033,7 @@ end
 local function smartCastEradicate()
     local char = LocalPlayer.Character
     if not char or not char.PrimaryPart then
-        Luna:Notification({ Title = "Lỗi Nhân Vật", Content = "Không tìm thấy nhân vật của bạn!", Icon = "error", ImageSource = "Material" })
+        Luna:Notification({ Title = "Lỗi Nhân Vật", Content = "Không tìm thấy nhân vật của bạn!", Icon = "cancel", ImageSource = "Material" })
         return false
     end
     local rootPos = char.PrimaryPart.Position
@@ -3020,7 +3067,7 @@ local function smartCastEradicate()
         Luna:Notification({
             Title = "Eradicate Cần Mục Tiêu",
             Content = "⚠️ Không có Titan nào trong bán kính 350 studs!\nBùa Eradicate là chiêu thức lướt chém xoáy dọc cánh tay Titan lên gáy. Hãy tiếp cận gần Titan hơn để thi triển.",
-            Icon = "warning",
+            Icon = "report",
             ImageSource = "Material"
         })
         return false
@@ -3056,7 +3103,7 @@ local function smartCastEradicate()
             Luna:Notification({
                 Title = "Lỗi Kích Hoạt Eradicate",
                 Content = tostring(err),
-                Icon = "error",
+                Icon = "cancel",
                 ImageSource = "Material"
             })
             return false
@@ -3065,7 +3112,7 @@ local function smartCastEradicate()
         Luna:Notification({
             Title = "Lỗi Module Eradicate",
             Content = "Không tìm thấy module Eradicate trong ReplicatedStorage!",
-            Icon = "error",
+            Icon = "cancel",
             ImageSource = "Material"
         })
         return false
@@ -3105,7 +3152,7 @@ local function castEnchantSkill(name)
 
     -- Trường hợp 3: Bùa Chủ Động (Active Skill có thể bấm thi triển)
     if not ClientEnchantmentsHandler then
-        Luna:Notification({ Title = "Lỗi", Content = "ClientEnchantmentsHandler chưa sẵn sàng!", Icon = "error", ImageSource = "Material" })
+        Luna:Notification({ Title = "Lỗi", Content = "ClientEnchantmentsHandler chưa sẵn sàng!", Icon = "cancel", ImageSource = "Material" })
         return
     end
 
@@ -3123,7 +3170,7 @@ local function castEnchantSkill(name)
         Luna:Notification({
             Title = "Kích Hoạt Thất Bại",
             Content = tostring(err),
-            Icon = "error",
+            Icon = "cancel",
             ImageSource = "Material"
         })
     end
@@ -3237,7 +3284,7 @@ local function runServerCompatibilityTest(enchantName)
         Luna:Notification({
             Title = "Lỗi Kiểm Thử",
             Content = "Vui lòng chọn một bùa chú hợp lệ để kiểm tra!",
-            Icon = "error",
+            Icon = "cancel",
             ImageSource = "Material"
         })
         return
@@ -3310,7 +3357,7 @@ local function runServerCompatibilityTest(enchantName)
             Luna:Notification({
                 Title = "SERVER KIỂM TRA CHẶT (Bị Chặn)",
                 Content = string.format("Server kiểm tra danh sách sở hữu và từ chối kích hoạt [%s].\nChi tiết: %s", it.name, tostring(castErr or "Không có phản hồi từ Server")),
-                Icon = "warning",
+                Icon = "report",
                 ImageSource = "Material"
             })
             print(string.format("[Chẩn Đoán] [%s] %s: Server từ chối hoặc yêu cầu điều kiện phụ.", it.rarity, it.name))
@@ -3607,7 +3654,7 @@ TabTrain:CreateButton({
             Luna:Notification({
                 Title = "Lỗi",
                 Content = "Không tìm thấy bao cát trong bán kính!",
-                Icon = "error",
+                Icon = "cancel",
                 ImageSource = "Material"
             })
         end
@@ -3692,7 +3739,7 @@ TabTrain:CreateButton({
             Luna:Notification({
                 Title = "Lỗi",
                 Content = "Không tìm thấy ghế đẩy tạ trong bán kính!",
-                Icon = "error",
+                Icon = "cancel",
                 ImageSource = "Material"
             })
         end
@@ -3742,7 +3789,7 @@ TabTrain:CreateButton({
             Luna:Notification({
                 Title = "ODMG Balancer",
                 Content = "Không thể mở giao diện. Thử lại sau!",
-                Icon = "error",
+                Icon = "cancel",
                 ImageSource = "Material"
             })
         end
@@ -4103,7 +4150,7 @@ TabAdvancedAuto:CreateToggle({
             Luna:Notification({
                 Title = "Auto Cannon",
                 Content = "Đã bật Auto nạp đạn đại bác khi lại gần!",
-                Icon = "rocket_launch",
+                Icon = "bolt",
                 ImageSource = "Material"
             })
         end
@@ -4201,7 +4248,7 @@ TabTitanCombat:CreateToggle({
             Luna:Notification({
                 Title = "Infinite Gas",
                 Content = "Đã bật Vô Hạn Khí Gas ODMG!",
-                Icon = "air",
+                Icon = "bolt",
                 ImageSource = "Material"
             })
         end
@@ -4383,7 +4430,7 @@ TabEnchant:CreateToggle({
                 Luna:Notification({
                     Title = "Thông Báo",
                     Content = "Vui lòng chọn một bùa chú hợp lệ trong danh sách!",
-                    Icon = "warning",
+                    Icon = "report",
                     ImageSource = "Material"
                 })
             end
@@ -4417,7 +4464,7 @@ TabEnchant:CreateButton({
             Luna:Notification({
                 Title = "Lỗi",
                 Content = "Chưa chọn bùa chú nào!",
-                Icon = "error",
+                Icon = "cancel",
                 ImageSource = "Material"
             })
         end
@@ -4479,7 +4526,7 @@ TabEnchant:CreateButton({
     Callback = function()
         local name = Settings.SelectedEnchantName
         if not name or name == "" then
-            Luna:Notification({ Title = "Lỗi", Content = "Chưa chọn bùa chú nào!", Icon = "error", ImageSource = "Material" })
+            Luna:Notification({ Title = "Lỗi", Content = "Chưa chọn bùa chú nào!", Icon = "cancel", ImageSource = "Material" })
             return
         end
         Settings.ActiveEnchantList[name] = true
@@ -4690,7 +4737,7 @@ TabEnchant:CreateToggle({
             Luna:Notification({
                 Title = "Giác Quan Thứ 6",
                 Content = "Đã bật cảnh báo nguy hiểm Titan chộp và các HUD hỗ trợ ngắm bắn!",
-                Icon = "radar",
+                Icon = "gps_fixed",
                 ImageSource = "Material"
             })
         end
@@ -4757,7 +4804,7 @@ TabEnchant:CreateToggle({
             Luna:Notification({
                 Title = "Auto Open Pack",
                 Content = "Đã bật tự động bóc gói bùa còn lại!",
-                Icon = "inventory_2",
+                Icon = "construction",
                 ImageSource = "Material"
             })
         end
