@@ -31,27 +31,56 @@
 
 -- =========================================================================
 -- 🛡️ EXECUTOR ENVIRONMENT COMPATIBILITY LAYER
--- An toàn khai báo các hàm executor toàn cục dưới dạng local biến động để
--- triệt tiêu 100% cảnh báo và lỗi typecheck / undefined global trong IDE Luau.
+-- Trích xuất hàm an toàn từ getgenv(), _G và getfenv() (không dùng rawget để
+-- tránh bypass __index metatable làm biến thành nil trên các Executor hiện đại).
 -- =========================================================================
-local _env = getfenv() :: any
-local getgenv: any = rawget(_env, "getgenv") or function() return _G end
-local isfile: any = rawget(_env, "isfile")
-local readfile: any = rawget(_env, "readfile")
-local writefile: any = rawget(_env, "writefile")
-local makefolder: any = rawget(_env, "makefolder")
-local isfolder: any = rawget(_env, "isfolder")
-local loadstring: any = rawget(_env, "loadstring") or rawget(_G, "loadstring")
-local firesignal: any = rawget(_env, "firesignal")
-local getconnections: any = rawget(_env, "getconnections")
-local mouse1click: any = rawget(_env, "mouse1click")
-local mousemoveabs: any = rawget(_env, "mousemoveabs")
-local hookfunction: any = rawget(_env, "hookfunction")
-local Drawing: any = rawget(_env, "Drawing")
-local checkcaller: any = rawget(_env, "checkcaller")
-local getrawmetatable: any = rawget(_env, "getrawmetatable")
-local setreadonly: any = rawget(_env, "setreadonly")
-local getupvalues: any = rawget(_env, "getupvalues") or (debug and (debug :: any).getupvalues)
+local genv = {}
+pcall(function()
+    if typeof(getgenv) == "function" then
+        genv = getgenv()
+    end
+end)
+
+local function resolveGlobal(name: string, fallback: any): any
+    local val = nil
+    if typeof(genv) == "table" and genv[name] ~= nil then
+        val = genv[name]
+    end
+    if val == nil then
+        pcall(function()
+            val = _G[name]
+        end)
+    end
+    if val == nil then
+        pcall(function()
+            local env = getfenv()
+            val = env[name]
+        end)
+    end
+    if val == nil and fallback ~= nil then
+        val = fallback
+    end
+    return val
+end
+
+local getgenv: any = resolveGlobal("getgenv", function() return genv end)
+local isfile: any = resolveGlobal("isfile", nil)
+local readfile: any = resolveGlobal("readfile", nil)
+local writefile: any = resolveGlobal("writefile", nil)
+local makefolder: any = resolveGlobal("makefolder", nil)
+local isfolder: any = resolveGlobal("isfolder", nil)
+local loadstring: any = resolveGlobal("loadstring", nil)
+local firesignal: any = resolveGlobal("firesignal", nil)
+local getconnections: any = resolveGlobal("getconnections", nil)
+local mouse1click: any = resolveGlobal("mouse1click", nil)
+local mousemoveabs: any = resolveGlobal("mousemoveabs", nil)
+local hookfunction: any = resolveGlobal("hookfunction", nil)
+local Drawing: any = resolveGlobal("Drawing", nil)
+local checkcaller: any = resolveGlobal("checkcaller", nil)
+local getrawmetatable: any = resolveGlobal("getrawmetatable", nil)
+local setreadonly: any = resolveGlobal("setreadonly", nil)
+local getupvalues: any = resolveGlobal("getupvalues", debug and (debug :: any).getupvalues)
+local request: any = resolveGlobal("request", resolveGlobal("http_request", nil))
 
 pcall(function()
     if typeof(getgenv) == "function" then
