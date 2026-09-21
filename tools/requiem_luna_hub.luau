@@ -82,11 +82,47 @@ local Mouse = LocalPlayer:GetMouse()
 -- Hỗ trợ 4 cơ chế nạp module:
 -- 1. Rojo / Roblox Studio (ModuleScript trong DataModel)
 -- 2. File cục bộ / Workspace Executor (readfile / isfile / loadfile)
--- 3. GitHub Raw trực tuyến từ repository ducccbb/Requiem (game:HttpGet)
+-- 3. Đa nền tảng HTTP GET (game:HttpGet, HttpGet, request, http_request) qua CDN/GitHub
 -- 4. Bộ nhớ đệm (Module Cache)
 -- =========================================================================
 local MODULE_CACHE = {}
-local GITHUB_MODULE_BASE = "https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/modules/"
+
+-- Hàm HTTP GET an toàn, tương thích mọi Executor (Solara, Wave, Delta, Fluxus, Arceus, Codex, v.v.)
+local function safeHttpGet(url)
+    -- 1. Thử game:HttpGet (Chuẩn thông dụng nhất qua __namecall)
+    local ok1, res1 = pcall(function()
+        return game:HttpGet(url)
+    end)
+    if ok1 and typeof(res1) == "string" and #res1 > 50 then
+        return true, res1
+    end
+
+    -- 2. Thử global HttpGet
+    if typeof(HttpGet) == "function" then
+        local ok2, res2 = pcall(HttpGet, url)
+        if ok2 and typeof(res2) == "string" and #res2 > 50 then
+            return true, res2
+        end
+    end
+
+    -- 3. Thử qua hệ thống request chuẩn executor (request / http_request / syn.request)
+    local reqFn = (typeof(request) == "function" and request)
+        or (typeof(http_request) == "function" and http_request)
+        or (typeof(syn) == "table" and typeof(syn.request) == "function" and syn.request)
+        or (typeof(http) == "table" and typeof(http.request) == "function" and http.request)
+    
+    if reqFn then
+        local ok3, res3 = pcall(reqFn, {
+            Url = url,
+            Method = "GET"
+        })
+        if ok3 and typeof(res3) == "table" and (res3.StatusCode == 200 or not res3.StatusCode) and typeof(res3.Body) == "string" and #res3.Body > 50 then
+            return true, res3.Body
+        end
+    end
+
+    return false, tostring(res1 or "No working HTTP fetcher available")
+end
 
 local function requireModule(moduleName)
     if MODULE_CACHE[moduleName] then
@@ -136,18 +172,23 @@ local function requireModule(moduleName)
         end
     end
 
-    -- 3. Tải trực tiếp từ GitHub Raw của dự án ducccbb/Requiem
-    if typeof(game.HttpGet) == "function" and typeof(loadstring) == "function" then
-        local ok, src = pcall(function()
-            return game:HttpGet(GITHUB_MODULE_BASE .. moduleName .. ".luau")
-        end)
-        if ok and src and #src > 10 then
-            local fnOk, fn = pcall(loadstring, src)
-            if fnOk and typeof(fn) == "function" then
-                local execOk, res = pcall(fn)
-                if execOk and res then
-                    MODULE_CACHE[moduleName] = res
-                    return res
+    -- 3. Tải trực tiếp từ CDN jsDelivr / GitHub Raw dự phòng của dự án ducccbb/Requiem
+    if typeof(loadstring) == "function" then
+        local moduleMirrors = {
+            "https://cdn.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/" .. moduleName .. ".luau",
+            "https://fastly.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/" .. moduleName .. ".luau",
+            "https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/modules/" .. moduleName .. ".luau"
+        }
+        for _, url in ipairs(moduleMirrors) do
+            local fetchOk, src = safeHttpGet(url)
+            if fetchOk and src and #src > 10 then
+                local fnOk, fn = pcall(loadstring, src)
+                if fnOk and typeof(fn) == "function" then
+                    local execOk, res = pcall(fn)
+                    if execOk and res then
+                        MODULE_CACHE[moduleName] = res
+                        return res
+                    end
                 end
             end
         end
@@ -257,12 +298,18 @@ local function sanitizeLunaSource(src)
     
     -- 2. Triệt tiêu hoàn toàn BlurModule bên trong Luna (chống tạo DepthOfField & RenderStep neon mesh)
     if string.find(src, "local function BlurModule(Frame)", 1, true) then
-        src = string.gsub(src, "local function BlurModule%s*%(Frame%)", "local function BlurModule(Frame) return end\nlocal function __OldBlurModule(Frame)")
+        local bm_idx = string.find(src, "local function BlurModule(Frame)", 1, true)
+        if not string.find(string.sub(src, bm_idx, bm_idx + 60), "return end", 1, true) then
+            src = string.gsub(src, "local function BlurModule%s*%(Frame%)", "local function BlurModule(Frame) return end\nlocal function __OldBlurModule(Frame)")
+        end
     end
     
     -- 3. Ngăn chặn spam HTTP 429 từ checkFriends API
     if string.find(src, "local function checkFriends()", 1, true) then
-        src = string.gsub(src, "local function checkFriends%s*%(%)", "local function checkFriends() return end\nlocal function __OldCheckFriends()")
+        local cf_idx = string.find(src, "local function checkFriends()", 1, true)
+        if not string.find(string.sub(src, cf_idx, cf_idx + 60), "return end", 1, true) then
+            src = string.gsub(src, "local function checkFriends%s*%(%)", "local function checkFriends() return end\nlocal function __OldCheckFriends()")
+        end
     end
     
     -- 4. Chống lỗi Image = nil (ContentId expected, got nil) khi gọi Notification
@@ -270,6 +317,14 @@ local function sanitizeLunaSource(src)
         src = string.gsub(src, "newNotification%.Icon%.Image%s*=%s*GetIcon%(data%.Icon,%s*data%.ImageSource%)", "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource) or \"\"")
     end
     
+    -- 5. Vá lỗi tải Lucide Icons bị 404 hoặc bị nhà mạng VN chặn GitHub Raw
+    src = string.gsub(src, "https://raw%.githubusercontent%.com/latte%-soft/lucide%-roblox/refs/heads/master/lib/Icons%.luau", "https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau")
+    src = string.gsub(src, "https://raw%.githubusercontent%.com/latte%-soft/lucide%-roblox/refs/heads/master/src/modules/util/icons%.json", "https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau")
+    
+    -- 6. Bảo vệ an toàn chống crash Luna nếu tải Icon thất bại
+    local old_icon_pattern = "local icons = isStudio and IconModule%.Lucide or loadstring%(iconData%)%(%)"
+    src = string.gsub(src, old_icon_pattern, "local icons = {['48px']={}}; pcall(function() icons = isStudio and IconModule.Lucide or loadstring(iconData)() end); if typeof(icons) ~= 'table' then icons = {['48px']={}} end")
+
     return src
 end
 
@@ -297,11 +352,13 @@ if not Luna and typeof(readfile) == "function" then
         "source.lua",
         "Luna-Interface-Suite-master/source.lua",
         "Luna-Interface-Suite-master/Luna-Interface-Suite-master/source.lua",
+        "Luna/source.lua",
     }
     for _, path in ipairs(localFilePaths) do
         local ok, content = pcall(readfile, path)
         if ok and typeof(content) == "string" and #content > 1000 then
-            local fnOk, fn = pcall(loadstring, sanitizeLunaSource(content))
+            local sanitized = sanitizeLunaSource(content)
+            local fnOk, fn = pcall(loadstring, sanitized)
             if fnOk and typeof(fn) == "function" then
                 local execOk, res = pcall(fn)
                 if execOk and typeof(res) == "table" then
@@ -310,31 +367,34 @@ if not Luna and typeof(readfile) == "function" then
                 elseif not execOk then
                     table.insert(lastLoadErrors, "Local file error (" .. path .. "): " .. tostring(res))
                 end
+            else
+                table.insert(lastLoadErrors, "Local file loadstring error (" .. path .. "): " .. tostring(fn))
             end
         end
     end
 end
 
 -- 3. Nạp trực tuyến với danh sách CDN dự phòng (Vượt rào cản nhà mạng VN chặn GitHub Raw)
-if not Luna and typeof(game.HttpGet) == "function" and typeof(loadstring) == "function" then
+if not Luna and typeof(loadstring) == "function" then
     local onlineMirrors = {
         -- CDN jsDelivr tốc độ cao (Băng thông cực nhanh, không bị nhà mạng VN chặn)
         "https://cdn.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
-        "https://cdn.jsdelivr.net/gh/Nebula-Softworks/Luna-Interface-Suite@master/source.lua",
+        "https://fastly.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
+        "https://gcore.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
         -- GitHub Raw chính chủ repository Requiem
         "https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/modules/luna_source.luau",
-        -- GitHub Raw gốc của Nebula-Softworks
+        -- Dự phòng nguồn Nebula-Softworks
+        "https://cdn.jsdelivr.net/gh/Nebula-Softworks/Luna-Interface-Suite@master/source.lua",
         "https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/master/source.lua",
         "https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/master/source.lua",
     }
 
     for _, url in ipairs(onlineMirrors) do
-        local fetchOk, rawSource = pcall(function()
-            return game:HttpGet(url)
-        end)
+        local fetchOk, rawSource = safeHttpGet(url)
 
         if fetchOk and typeof(rawSource) == "string" and #rawSource > 1000 then
-            local fnOk, fn = pcall(loadstring, sanitizeLunaSource(rawSource))
+            local sanitized = sanitizeLunaSource(rawSource)
+            local fnOk, fn = pcall(loadstring, sanitized)
             if fnOk and typeof(fn) == "function" then
                 local execOk, res = pcall(fn)
                 if execOk and typeof(res) == "table" then
@@ -359,6 +419,8 @@ if not Luna then
         for _, err in ipairs(lastLoadErrors) do
             warn("  -> " .. tostring(err))
         end
+    else
+        warn("[Requiem Hub] Cảnh báo: Executor của bạn có thể đã tắt hoặc không hỗ trợ hàm loadstring() / game:HttpGet()!")
     end
     return
 end

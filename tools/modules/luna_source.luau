@@ -1579,12 +1579,18 @@ local function GetIcon(icon, source)
 	if source == "Custom" then
 		return "rbxassetid://" .. icon
 	elseif source == "Lucide" then
-		-- full credit to latte softworks :)
-		local iconData = not isStudio and game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/refs/heads/master/lib/Icons.luau")
-		local icons = isStudio and IconModule.Lucide or loadstring(iconData)()
+		local iconData = nil
+		pcall(function()
+			iconData = not isStudio and (game:HttpGet("https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau") or game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/refs/heads/master/lib/Icons.luau"))
+		end)
+		local icons = {['48px'] = {}}
+		pcall(function()
+			icons = isStudio and IconModule.Lucide or (iconData and loadstring(iconData)())
+		end)
+		if typeof(icons) ~= "table" then icons = {['48px'] = {}} end
 		if not isStudio then
 			icon = string.match(string.lower(icon), "^%s*(.*)%s*$") :: string
-			local sizedicons = icons['48px']
+			local sizedicons = icons['48px'] or {}
 
 			local r = sizedicons[icon]
 			if not r then
