@@ -1579,6 +1579,7 @@ local function GetIcon(icon, source)
 	if source == "Custom" then
 		return "rbxassetid://" .. icon
 	elseif source == "Lucide" then
+		-- full credit to latte softworks :)
 		local iconData = nil
 		pcall(function()
 			iconData = not isStudio and (game:HttpGet("https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau") or game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/refs/heads/master/lib/Icons.luau"))
@@ -1590,7 +1591,7 @@ local function GetIcon(icon, source)
 		if typeof(icons) ~= "table" then icons = {['48px'] = {}} end
 		if not isStudio then
 			icon = string.match(string.lower(icon), "^%s*(.*)%s*$") :: string
-			local sizedicons = icons['48px'] or {}
+			local sizedicons = icons['48px']
 
 			local r = sizedicons[icon]
 			if not r then
@@ -1943,12 +1944,7 @@ function Luna:Notification(data) -- action e.g open messages
 		-- Set Data
 		newNotification.Title.Text = data.Title
 		newNotification.Description.Text = data.Content 
-		local _iconRes = GetIcon(data.Icon, data.ImageSource)
-		if typeof(_iconRes) == "string" then
-			newNotification.Icon.Image = _iconRes
-		else
-			newNotification.Icon.Image = ""
-		end
+		newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)
 
 		-- Set initial transparency values
 		newNotification.BackgroundTransparency = 1
@@ -2432,7 +2428,7 @@ function Luna:CreateWindow(WindowSettings)
 		local friendsCooldown = 0
 		local function getPing() return math.clamp(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue(), 10, 700) end
 
-local function checkFriends()
+		local function checkFriends()
 	return
 end
 

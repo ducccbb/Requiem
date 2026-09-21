@@ -153,6 +153,58 @@ local function safeHttpGet(url)
     return false, tostring(res1 or "No working HTTP fetcher available")
 end
 
+-- =========================================================================
+-- HÀM LÀM SẠCH MÃ NGUỒN LUNA TRƯỚC KHI LOADSTRING (TRIỆT TIÊU WEDGE MESH & CRASH)
+-- =========================================================================
+local function sanitizeLunaSource(src)
+    if typeof(src) ~= "string" then return src end
+    
+    -- 1. Khắc phục triệt để lỗi cú pháp Luau: 'continue' là từ khóa hệ thống (Reserved Keyword)
+    src = string.gsub(src, "local%s+continue%s*=", "local continueVar = ")
+    src = string.gsub(src, "while%s+not%s+continue%s+do", "while not continueVar do")
+    src = string.gsub(src, "continue%s*=%s*IsNotNaN", "continueVar = IsNotNaN")
+    
+    -- 2. Triệt tiêu hoàn toàn BlurModule & WedgeMesh (chống tạo DepthOfField & RenderStep neon mesh)
+    -- Vô hiệu hóa trực tiếp các lệnh gọi BlurModule
+    src = string.gsub(src, "BlurModule%s*%(%s*Main%s*%)", "pcall(function() end)")
+    src = string.gsub(src, "BlurModule%s*%(%s*newNotification%s*%)", "pcall(function() end)")
+    
+    -- Thay thế định nghĩa hàm BlurModule thành hàm rỗng
+    if string.find(src, "local function BlurModule(Frame)", 1, true) then
+        local bm_idx = string.find(src, "local function BlurModule(Frame)", 1, true)
+        if not string.find(string.sub(src, bm_idx, bm_idx + 60), "return end", 1, true) then
+            src = string.gsub(src, "local function BlurModule%s*%(Frame%)", "local function BlurModule(Frame) return end\nlocal function __OldBlurModule(Frame)")
+        end
+    end
+
+    -- Bảo vệ triệt để lỗi: WedgeMesh is not a valid member of Part "Part"
+    src = string.gsub(src, "p0%.WedgeMesh%.Scale", "(p0:FindFirstChild('WedgeMesh') or {Scale = Vector3.new()}).Scale")
+    src = string.gsub(src, "p1%.WedgeMesh%.Scale", "(p1:FindFirstChild('WedgeMesh') or {Scale = Vector3.new()}).Scale")
+    
+    -- 3. Ngăn chặn spam HTTP 429 từ checkFriends API
+    if string.find(src, "local function checkFriends()", 1, true) then
+        local cf_idx = string.find(src, "local function checkFriends()", 1, true)
+        if not string.find(string.sub(src, cf_idx, cf_idx + 60), "return end", 1, true) then
+            src = string.gsub(src, "local function checkFriends%s*%(%)", "local function checkFriends() return end\nlocal function __OldCheckFriends()")
+        end
+    end
+    
+    -- 4. Chống lỗi Image = nil (ContentId expected, got nil) khi gọi Notification
+    if string.find(src, "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)", 1, true) then
+        src = string.gsub(src, "newNotification%.Icon%.Image%s*=%s*GetIcon%(data%.Icon,%s*data%.ImageSource%)", "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource) or \"\"")
+    end
+    
+    -- 5. Vá lỗi tải Lucide Icons bị 404 hoặc bị nhà mạng VN chặn GitHub Raw
+    src = string.gsub(src, "https://raw%.githubusercontent%.com/latte%-soft/lucide%-roblox/refs/heads/master/lib/Icons%.luau", "https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau")
+    src = string.gsub(src, "https://raw%.githubusercontent%.com/latte%-soft/lucide%-roblox/refs/heads/master/src/modules/util/icons%.json", "https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau")
+    
+    -- 6. Bảo vệ an toàn chống crash Luna nếu tải Icon thất bại
+    local old_icon_pattern = "local icons = isStudio and IconModule%.Lucide or loadstring%(iconData%)%(%)"
+    src = string.gsub(src, old_icon_pattern, "local icons = {['48px']={}}; pcall(function() icons = isStudio and IconModule.Lucide or loadstring(iconData)() end); if typeof(icons) ~= 'table' then icons = {['48px']={}} end")
+
+    return src
+end
+
 local function requireModule(moduleName)
     if MODULE_CACHE[moduleName] then
         return MODULE_CACHE[moduleName]
@@ -188,6 +240,9 @@ local function requireModule(moduleName)
                 local code = nil
                 pcall(function() code = readfile(path) end)
                 if code and #code > 0 then
+                    if moduleName == "luna_source" then
+                        code = sanitizeLunaSource(code)
+                    end
                     local fnOk, fn = pcall(loadstring, code)
                     if fnOk and typeof(fn) == "function" then
                         local execOk, res = pcall(fn)
@@ -206,11 +261,17 @@ local function requireModule(moduleName)
         local moduleMirrors = {
             "https://cdn.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/" .. moduleName .. ".luau",
             "https://fastly.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/" .. moduleName .. ".luau",
+            "https://gcore.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/" .. moduleName .. ".luau",
+            "https://raw.githack.com/ducccbb/Requiem/main/tools/modules/" .. moduleName .. ".luau",
+            "https://cdn.statically.io/gh/ducccbb/Requiem/main/tools/modules/" .. moduleName .. ".luau",
             "https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/modules/" .. moduleName .. ".luau"
         }
         for _, url in ipairs(moduleMirrors) do
             local fetchOk, src = safeHttpGet(url)
             if fetchOk and src and #src > 10 then
+                if moduleName == "luna_source" then
+                    src = sanitizeLunaSource(src)
+                end
                 local fnOk, fn = pcall(loadstring, src)
                 if fnOk and typeof(fn) == "function" then
                     local execOk, res = pcall(fn)
@@ -315,48 +376,6 @@ pcall(function()
     end
 end)
 
--- Hàm làm sạch mã nguồn Luna trước khi loadstring (khắc phục lỗi Luau reserved keyword & crash)
-local function sanitizeLunaSource(src)
-    if typeof(src) ~= "string" then return src end
-    
-    -- 1. Khắc phục triệt để lỗi cú pháp Luau: 'continue' là từ khóa hệ thống (Reserved Keyword)
-    -- Các bản Luna cũ dùng 'local continue = IsNotNaN(...)' gây sập loadstring 100% trên mọi Executor hiện đại
-    src = string.gsub(src, "local%s+continue%s*=", "local continueVar = ")
-    src = string.gsub(src, "while%s+not%s+continue%s+do", "while not continueVar do")
-    src = string.gsub(src, "continue%s*=%s*IsNotNaN", "continueVar = IsNotNaN")
-    
-    -- 2. Triệt tiêu hoàn toàn BlurModule bên trong Luna (chống tạo DepthOfField & RenderStep neon mesh)
-    if string.find(src, "local function BlurModule(Frame)", 1, true) then
-        local bm_idx = string.find(src, "local function BlurModule(Frame)", 1, true)
-        if not string.find(string.sub(src, bm_idx, bm_idx + 60), "return end", 1, true) then
-            src = string.gsub(src, "local function BlurModule%s*%(Frame%)", "local function BlurModule(Frame) return end\nlocal function __OldBlurModule(Frame)")
-        end
-    end
-    
-    -- 3. Ngăn chặn spam HTTP 429 từ checkFriends API
-    if string.find(src, "local function checkFriends()", 1, true) then
-        local cf_idx = string.find(src, "local function checkFriends()", 1, true)
-        if not string.find(string.sub(src, cf_idx, cf_idx + 60), "return end", 1, true) then
-            src = string.gsub(src, "local function checkFriends%s*%(%)", "local function checkFriends() return end\nlocal function __OldCheckFriends()")
-        end
-    end
-    
-    -- 4. Chống lỗi Image = nil (ContentId expected, got nil) khi gọi Notification
-    if string.find(src, "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)", 1, true) then
-        src = string.gsub(src, "newNotification%.Icon%.Image%s*=%s*GetIcon%(data%.Icon,%s*data%.ImageSource%)", "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource) or \"\"")
-    end
-    
-    -- 5. Vá lỗi tải Lucide Icons bị 404 hoặc bị nhà mạng VN chặn GitHub Raw
-    src = string.gsub(src, "https://raw%.githubusercontent%.com/latte%-soft/lucide%-roblox/refs/heads/master/lib/Icons%.luau", "https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau")
-    src = string.gsub(src, "https://raw%.githubusercontent%.com/latte%-soft/lucide%-roblox/refs/heads/master/src/modules/util/icons%.json", "https://cdn.jsdelivr.net/gh/latte-soft/lucide-roblox@master/lib/Icons.luau")
-    
-    -- 6. Bảo vệ an toàn chống crash Luna nếu tải Icon thất bại
-    local old_icon_pattern = "local icons = isStudio and IconModule%.Lucide or loadstring%(iconData%)%(%)"
-    src = string.gsub(src, old_icon_pattern, "local icons = {['48px']={}}; pcall(function() icons = isStudio and IconModule.Lucide or loadstring(iconData)() end); if typeof(icons) ~= 'table' then icons = {['48px']={}} end")
-
-    return src
-end
-
 -- =========================================================================
 -- NẠP THƯ VIỆN LUNA INTERFACE SUITE (MULTI-TIER CDN & FAILSAFE LOADER)
 -- =========================================================================
@@ -410,6 +429,8 @@ if not Luna and typeof(loadstring) == "function" then
         "https://cdn.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
         "https://fastly.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
         "https://gcore.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
+        "https://raw.githack.com/ducccbb/Requiem/main/tools/modules/luna_source.luau",
+        "https://cdn.statically.io/gh/ducccbb/Requiem/main/tools/modules/luna_source.luau",
         -- GitHub Raw chính chủ repository Requiem
         "https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/modules/luna_source.luau",
         -- Dự phòng nguồn Nebula-Softworks
