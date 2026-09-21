@@ -4,10 +4,15 @@ Requiem Master Hub & Automation Suite for Requiem.
 
 ## 🚀 Quick Start (Roblox Executor Loader)
 
-Chạy **1 dòng duy nhất** trong Roblox Executor để tải phiên bản mới nhất từ GitHub:
+Chạy dòng lệnh sau trong Roblox Executor để nạp bản mới nhất (khuyên dùng CDN jsDelivr để chống cache và vượt rào cản nhà mạng VN):
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/requiem_luna_hub.luau"))()
+loadstring(game:HttpGet("https://cdn.jsdelivr.net/gh/ducccbb/Requiem@main/tools/requiem_luna_hub.luau"))()
+```
+
+*Hoặc nạp trực tiếp qua GitHub Raw (kèm anti-cache):*
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/requiem_luna_hub.luau?t=" .. tick()))()
 ```
 
 ---
