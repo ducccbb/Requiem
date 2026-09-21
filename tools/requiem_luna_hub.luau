@@ -245,21 +245,27 @@ pcall(function()
     end
 end)
 
--- Hàm làm sạch mã nguồn Luna trước khi loadstring (vô hiệu hóa BlurModule & checkFriends)
+-- Hàm làm sạch mã nguồn Luna trước khi loadstring (khắc phục lỗi Luau reserved keyword & crash)
 local function sanitizeLunaSource(src)
     if typeof(src) ~= "string" then return src end
     
-    -- Triệt tiêu hoàn toàn BlurModule bên trong Luna (chống tạo DepthOfField & RenderStep neon mesh)
+    -- 1. Khắc phục triệt để lỗi cú pháp Luau: 'continue' là từ khóa hệ thống (Reserved Keyword)
+    -- Các bản Luna cũ dùng 'local continue = IsNotNaN(...)' gây sập loadstring 100% trên mọi Executor hiện đại
+    src = string.gsub(src, "local%s+continue%s*=", "local continueVar = ")
+    src = string.gsub(src, "while%s+not%s+continue%s+do", "while not continueVar do")
+    src = string.gsub(src, "continue%s*=%s*IsNotNaN", "continueVar = IsNotNaN")
+    
+    -- 2. Triệt tiêu hoàn toàn BlurModule bên trong Luna (chống tạo DepthOfField & RenderStep neon mesh)
     if string.find(src, "local function BlurModule(Frame)", 1, true) then
         src = string.gsub(src, "local function BlurModule%s*%(Frame%)", "local function BlurModule(Frame) return end\nlocal function __OldBlurModule(Frame)")
     end
     
-    -- Ngăn chặn spam HTTP 429 từ checkFriends API
+    -- 3. Ngăn chặn spam HTTP 429 từ checkFriends API
     if string.find(src, "local function checkFriends()", 1, true) then
         src = string.gsub(src, "local function checkFriends%s*%(%)", "local function checkFriends() return end\nlocal function __OldCheckFriends()")
     end
     
-    -- Chống lỗi Image = nil (ContentId expected, got nil) khi gọi Notification
+    -- 4. Chống lỗi Image = nil (ContentId expected, got nil) khi gọi Notification
     if string.find(src, "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)", 1, true) then
         src = string.gsub(src, "newNotification%.Icon%.Image%s*=%s*GetIcon%(data%.Icon,%s*data%.ImageSource%)", "newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource) or \"\"")
     end
