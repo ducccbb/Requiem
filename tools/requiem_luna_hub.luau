@@ -5828,6 +5828,82 @@ TabCraft:CreateToggle({
     end
 })
 
+TabCraft:CreateSection("💰 Cày Tiền Marcs (Marc Farming Suite)")
+
+TabCraft:CreateButton({
+    Name = "🚀 Dịch Chuyển Đến Thương Nhân Gần Nhất (Merchant TP)",
+    Description = "Tự động tìm và dịch chuyển bạn đến NPC Thương nhân gần nhất để bán đồ lấy Marcs",
+    Callback = function()
+        local char = LocalPlayer.Character
+        local root = char and (char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart)
+        if not root then
+            Luna:Notification({ Title = "Lỗi", Content = "Không tìm thấy nhân vật!", Icon = "report" })
+            return
+        end
+        local merchants = CollectionService:GetTagged("Merchant")
+        local bestDist = math.huge
+        local bestTarget = nil
+        for _, m in ipairs(merchants) do
+            local part = m:IsA("BasePart") and m or (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart or m:FindFirstChildWhichIsA("BasePart"))
+            if part then
+                local dist = (part.Position - root.Position).Magnitude
+                if dist < bestDist then
+                    bestDist = dist
+                    bestTarget = part
+                end
+            end
+        end
+        if bestTarget then
+            root.CFrame = bestTarget.CFrame * CFrame.new(0, 0, 4)
+            Luna:Notification({
+                Title = "Dịch Chuyển Merchant",
+                Content = string.format("Đã dịch chuyển đến Thương nhân (cách %.1f studs)!", bestDist),
+                Icon = "check_circle"
+            })
+        else
+            Luna:Notification({
+                Title = "Merchant TP",
+                Content = "Không tìm thấy NPC Thương nhân nào trong khu vực!",
+                Icon = "report"
+            })
+        end
+    end
+})
+
+TabCraft:CreateButton({
+    Name = "⚡ Kích Hoạt Buff Tăng Tốc Đào Khoáng (x3 Mining Speed)",
+    Description = "Thiết lập thuộc tính MiningSpeedMultiplier giúp cuốc đập đá/quặng vỡ nhanh gấp 3 lần",
+    Callback = function()
+        local char = LocalPlayer.Character
+        if char then
+            char:SetAttribute("MiningSpeedMultiplier", 3.0)
+            LocalPlayer:SetAttribute("MiningSpeedMultiplier", 3.0)
+            Luna:Notification({
+                Title = "Buff Đào Khoáng",
+                Content = "Đã kích hoạt MiningSpeedMultiplier = 3.0x!",
+                Icon = "bolt"
+            })
+        end
+    end
+})
+
+TabCraft:CreateButton({
+    Name = "🎣 Kích Hoạt Buff Vận May Câu Cá (x3 Fishing Chance)",
+    Description = "Thiết lập FishingChanceMultiplier giúp cá cắn câu liên tục không ngừng nghỉ",
+    Callback = function()
+        local char = LocalPlayer.Character
+        if char then
+            char:SetAttribute("FishingChanceMultiplier", 3.0)
+            LocalPlayer:SetAttribute("FishingChanceMultiplier", 3.0)
+            Luna:Notification({
+                Title = "Buff Câu Cá",
+                Content = "Đã kích hoạt FishingChanceMultiplier = 3.0x!",
+                Icon = "bolt"
+            })
+        end
+    end
+})
+
 -- =========================================================================
 -- TAB 5: 🚀 DỊCH CHUYỂN NHANH TRƯỜNG TẬP (TELEPORTS)
 -- =========================================================================
