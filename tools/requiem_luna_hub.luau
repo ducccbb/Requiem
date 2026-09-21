@@ -607,6 +607,78 @@ pcall(function()
     end
 end)
 
+-- =========================================================================
+-- HỆ THỐNG GHI ĐÈ & ĐIỀU PHỐI THUỘC TÍNH CLIENT (ATTRIBUTE SPOOFER)
+-- Trực tiếp can thiệp ClientAttributesHandler.getAttribute & getAttributes()
+-- Đảm bảo 100% bùa chú và các chỉ số (Fishing, Mining, Speed, Dmg) có hiệu lực thực tế!
+-- =========================================================================
+local SpoofedAttributes = {}
+
+local function setSpoofedAttribute(name: string, value: any)
+    SpoofedAttributes[name] = value
+    pcall(function()
+        if ClientAttributesHandler then
+            if typeof(ClientAttributesHandler.getAttributes) == "function" then
+                local attrs = ClientAttributesHandler.getAttributes()
+                if typeof(attrs) == "table" then
+                    attrs[name] = value
+                end
+            end
+            if typeof(ClientAttributesHandler.onAttributeChanged) == "function" then
+                local sig = ClientAttributesHandler.onAttributeChanged(name)
+                if sig and typeof(sig.Fire) == "function" then
+                    sig:Fire(value)
+                end
+            end
+            if ClientAttributesHandler.Changed and typeof(ClientAttributesHandler.Changed.Fire) == "function" then
+                ClientAttributesHandler.Changed:Fire()
+            end
+        end
+    end)
+    pcall(function()
+        if LocalPlayer.Character then
+            LocalPlayer.Character:SetAttribute(name, value)
+        end
+        LocalPlayer:SetAttribute(name, value)
+    end)
+end
+
+pcall(function()
+    if ClientAttributesHandler then
+        if typeof(ClientAttributesHandler.getAttribute) == "function" then
+            local origGetAttribute = ClientAttributesHandler.getAttribute
+            local function hookedGetAttribute(name, ...)
+                if SpoofedAttributes[name] ~= nil then
+                    return SpoofedAttributes[name]
+                end
+                return origGetAttribute(name, ...)
+            end
+            if typeof(hookfunction) == "function" then
+                pcall(function()
+                    origGetAttribute = hookfunction(ClientAttributesHandler.getAttribute, hookedGetAttribute)
+                end)
+            end
+            ClientAttributesHandler.getAttribute = hookedGetAttribute
+        end
+        
+        if typeof(ClientAttributesHandler.getDiminishedAttribute) == "function" then
+            local origGetDiminished = ClientAttributesHandler.getDiminishedAttribute
+            local function hookedGetDiminished(name, ...)
+                if SpoofedAttributes[name] ~= nil then
+                    return SpoofedAttributes[name]
+                end
+                return origGetDiminished(name, ...)
+            end
+            if typeof(hookfunction) == "function" then
+                pcall(function()
+                    origGetDiminished = hookfunction(ClientAttributesHandler.getDiminishedAttribute, hookedGetDiminished)
+                end)
+            end
+            ClientAttributesHandler.getDiminishedAttribute = hookedGetDiminished
+        end
+    end
+end)
+
 pcall(function()
     local Client = ReplicatedStorage:WaitForChild("Client")
     local Interfaces = Client:WaitForChild("Interfaces")
@@ -1277,19 +1349,30 @@ end
 if FishingHandler then
     FishingHandler.onStart:Connect(function()
         if Settings.AutoFishing then
-            task.wait(0.3)
-            pcall(function()
-                FishingHandler.finish(true)
+            task.spawn(function()
+                task.wait(0.15)
+                pcall(function()
+                    FishingHandler.finish(true)
+                end)
+                Luna:Notification({
+                    Title = "Auto Câu Cá",
+                    Content = "Cá đã cắn câu! Tự động giật dính cá thành công!",
+                    Icon = "anchor",
+                    ImageSource = "Material"
+                })
             end)
-            Luna:Notification({
-                Title = "Fishing",
-                Content = "Đã tự động câu dính cá thành công!",
-                Icon = "anchor",
-                ImageSource = "Material"
-            })
         end
     end)
 end
+
+-- Vòng lặp giám sát phụ: Nếu minigame đang kích hoạt mà chưa hoàn thành, tự động ép win
+RunService.Heartbeat:Connect(function()
+    if Settings.AutoFishing and FishingHandler and FishingHandler.active then
+        pcall(function()
+            FishingHandler.finish(true)
+        end)
+    end
+end)
 
 -- Fail-Safe Hook: Chặn client tự gửi 0 (Miss/Fail) khi đang bật Instant Bypass
 if PlayerNamespace and PlayerNamespace.Skillcheck and typeof(PlayerNamespace.Skillcheck.post) == "function" then
@@ -5809,11 +5892,34 @@ local TabCraft = Window:CreateTab({
 TabCraft:CreateSection("Câu Cá (Fishing)")
 
 TabCraft:CreateToggle({
-    Name = "Auto Câu Cá Hoàn Hảo (Instant Catch)",
-    Description = "Tự động giật dính cá ngay lập tức khi cá vừa cắn câu",
+    Name = "Auto Câu Cá Hoàn Hảo (Instant Catch & God Boost)",
+    Description = "Tự động tăng tỷ lệ cắn câu x10, mở rộng thanh giữ cá trùm màn hình & tự động giật dính cá ngay tức khắc",
     CurrentValue = false,
     Callback = function(val)
         Settings.AutoFishing = val
+        if val then
+            setSpoofedAttribute("FishingChanceMultiplier", 10.0)
+            setSpoofedAttribute("FishingControlMultiplier", 10.0)
+            setSpoofedAttribute("FishingCatchFillMultiplier", 25.0)
+            setSpoofedAttribute("FishingCatchDrainMultiplier", 0.0)
+            setSpoofedAttribute("FishingFishSpeedMultiplier", 0.1)
+            Luna:Notification({
+                Title = "Thần Thể Câu Cá",
+                Content = "Đã bật: Cắn câu x10 + Thanh bắt cá cực đại + Tự giật dính cá 100%!",
+                Icon = "bolt"
+            })
+        else
+            setSpoofedAttribute("FishingChanceMultiplier", nil)
+            setSpoofedAttribute("FishingControlMultiplier", nil)
+            setSpoofedAttribute("FishingCatchFillMultiplier", nil)
+            setSpoofedAttribute("FishingCatchDrainMultiplier", nil)
+            setSpoofedAttribute("FishingFishSpeedMultiplier", nil)
+            Luna:Notification({
+                Title = "Auto Câu Cá",
+                Content = "Đã tắt chế độ Thần Thể Câu Cá.",
+                Icon = "info"
+            })
+        end
     end
 })
 
@@ -5871,36 +5977,34 @@ TabCraft:CreateButton({
 })
 
 TabCraft:CreateButton({
-    Name = "⚡ Kích Hoạt Buff Tăng Tốc Đào Khoáng (x3 Mining Speed)",
-    Description = "Thiết lập thuộc tính MiningSpeedMultiplier giúp cuốc đập đá/quặng vỡ nhanh gấp 3 lần",
+    Name = "⚡ Kích Hoạt Buff Đào Khoáng & Khai Thác (x5 Mining & Swing Speed)",
+    Description = "Can thiệp ClientAttributesHandler ép ToolSwingSpeedMultiplier & MiningSpeedMultiplier x5 (Vung cuốc/rìu siêu tốc)",
     Callback = function()
-        local char = LocalPlayer.Character
-        if char then
-            char:SetAttribute("MiningSpeedMultiplier", 3.0)
-            LocalPlayer:SetAttribute("MiningSpeedMultiplier", 3.0)
-            Luna:Notification({
-                Title = "Buff Đào Khoáng",
-                Content = "Đã kích hoạt MiningSpeedMultiplier = 3.0x!",
-                Icon = "bolt"
-            })
-        end
+        setSpoofedAttribute("ToolSwingSpeedMultiplier", 5.0)
+        setSpoofedAttribute("MiningSpeedMultiplier", 5.0)
+        setSpoofedAttribute("ChoppingSpeedMultiplier", 5.0)
+        Luna:Notification({
+            Title = "Buff Khai Thác",
+            Content = "Đã ép ToolSwing x5, Mining x5, Chopping x5 vào ClientAttributesHandler!",
+            Icon = "bolt"
+        })
     end
 })
 
 TabCraft:CreateButton({
-    Name = "🎣 Kích Hoạt Buff Vận May Câu Cá (x3 Fishing Chance)",
-    Description = "Thiết lập FishingChanceMultiplier giúp cá cắn câu liên tục không ngừng nghỉ",
+    Name = "🎣 Kích Hoạt Buff Thần Thể Câu Cá (x10 Chance & Auto Bar)",
+    Description = "Trực tiếp can thiệp ClientAttributesHandler giúp cá cắn câu sau 5s & thanh bắt cá mở rộng tối đa",
     Callback = function()
-        local char = LocalPlayer.Character
-        if char then
-            char:SetAttribute("FishingChanceMultiplier", 3.0)
-            LocalPlayer:SetAttribute("FishingChanceMultiplier", 3.0)
-            Luna:Notification({
-                Title = "Buff Câu Cá",
-                Content = "Đã kích hoạt FishingChanceMultiplier = 3.0x!",
-                Icon = "bolt"
-            })
-        end
+        setSpoofedAttribute("FishingChanceMultiplier", 10.0)
+        setSpoofedAttribute("FishingControlMultiplier", 10.0)
+        setSpoofedAttribute("FishingCatchFillMultiplier", 25.0)
+        setSpoofedAttribute("FishingCatchDrainMultiplier", 0.0)
+        setSpoofedAttribute("FishingFishSpeedMultiplier", 0.1)
+        Luna:Notification({
+            Title = "Buff Thần Thể Câu Cá",
+            Content = "Đã ép Cắn câu x10, Thanh giữ cực đại, Fill x25 vào ClientAttributesHandler!",
+            Icon = "bolt"
+        })
     end
 })
 
