@@ -868,6 +868,7 @@ local Settings = {
 
     -- Fishing
     AutoFishing = false,
+    BypassFishingExhaustion = true,
 
     -- Skillcheck (Legacy & VIM)
     AutoSkillcheck = false,
@@ -1371,6 +1372,55 @@ RunService.Heartbeat:Connect(function()
         pcall(function()
             FishingHandler.finish(true)
         end)
+    end
+end)
+
+-- =========================================================================
+-- HỆ THỐNG PHÁ BỎ KIỆT SỨC KHI CÂU CÁ (FISHING EXHAUSTION / FATIGUE BYPASS)
+-- Vĩnh viễn dập tắt "My arms are too tired...", "I need to rest before I cast again..."
+-- Cho phép quăng cần câu liên tục 24/7 không giới hạn thể lực!
+-- =========================================================================
+pcall(function()
+    local Common = ReplicatedStorage:FindFirstChild("Common")
+    if Common then
+        local Constants = require(Common:FindFirstChild("Constants"))
+        if Constants then
+            Constants.Exhaustion = 999999
+        end
+    end
+end)
+
+pcall(function()
+    if _VitalityNamespace and _VitalityNamespace.Store then
+        if typeof(_VitalityNamespace.Store.client) == "function" then
+            local origVitClient = _VitalityNamespace.Store.client
+            local function hookedVitClient(...)
+                local vit = origVitClient(...)
+                if vit and typeof(vit) == "table" then
+                    vit.exhaustion = 0
+                end
+                return vit
+            end
+            if typeof(hookfunction) == "function" then
+                pcall(function()
+                    origVitClient = hookfunction(_VitalityNamespace.Store.client, hookedVitClient)
+                end)
+            end
+            _VitalityNamespace.Store.client = hookedVitClient
+        end
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if Settings.BypassFishingExhaustion ~= false then
+        if _VitalityNamespace and _VitalityNamespace.Store and typeof(_VitalityNamespace.Store.client) == "function" then
+            pcall(function()
+                local vit = _VitalityNamespace.Store.client()
+                if vit and typeof(vit) == "table" then
+                    vit.exhaustion = 0
+                end
+            end)
+        end
     end
 end)
 
@@ -5903,6 +5953,15 @@ TabCraft:CreateToggle({
             setSpoofedAttribute("FishingCatchFillMultiplier", 25.0)
             setSpoofedAttribute("FishingCatchDrainMultiplier", 0.0)
             setSpoofedAttribute("FishingFishSpeedMultiplier", 0.1)
+            pcall(function()
+                local Common = ReplicatedStorage:FindFirstChild("Common")
+                if Common then
+                    local Constants = require(Common:FindFirstChild("Constants"))
+                    if Constants then
+                        Constants.Exhaustion = 999999
+                    end
+                end
+            end)
             Luna:Notification({
                 Title = "Thần Thể Câu Cá",
                 Content = "Đã bật: Cắn câu x10 + Thanh bắt cá cực đại + Tự giật dính cá 100%!",
@@ -5920,6 +5979,29 @@ TabCraft:CreateToggle({
                 Icon = "info"
             })
         end
+    end
+})
+
+TabCraft:CreateToggle({
+    Name = "Vô Hạn Thể Lực Câu Cá (Bypass Exhaustion / No Rest)",
+    Description = "Xóa bỏ triệt để 'My arms are too tired...', 'I need to rest...', quăng cần liên tục 24/7 không cần nghỉ",
+    CurrentValue = true,
+    Callback = function(val)
+        Settings.BypassFishingExhaustion = val
+        pcall(function()
+            local Common = ReplicatedStorage:FindFirstChild("Common")
+            if Common then
+                local Constants = require(Common:FindFirstChild("Constants"))
+                if Constants then
+                    Constants.Exhaustion = val and 999999 or 10
+                end
+            end
+        end)
+        Luna:Notification({
+            Title = "Thể Lực Câu Cá",
+            Content = val and "Đã kích hoạt Vô Hạn Thể Lực (Không mỏi tay)!" or "Đã khôi phục giới hạn thể lực bình thường.",
+            Icon = val and "bolt" or "info"
+        })
     end
 })
 
