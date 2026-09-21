@@ -4444,6 +4444,144 @@ TabAdvancedAuto:CreateButton({
     end
 })
 
+TabAdvancedAuto:CreateSection("🎖️ Quân Đoàn & Tốt Nghiệp (Auxiliary / Scouting Legion)")
+
+TabAdvancedAuto:CreateButton({
+    Name = "Mở Giao Diện Auxiliary (Chọn Binh Đoàn)",
+    Description = "Kích hoạt hiển thị UI Auxiliary chính thức để chọn nhập ngũ Trinh Sát Đoàn",
+    Callback = function()
+        local opened = false
+
+        -- 1. Ưu tiên: Kích hoạt callback lắng nghe trong React (u4(true)) của Auxiliary.luau
+        pcall(function()
+            local Common = ReplicatedStorage:FindFirstChild("Common")
+            if Common then
+                local Network = Common:FindFirstChild("Network")
+                if Network then
+                    local Namespaces = Network:FindFirstChild("Namespaces")
+                    if Namespaces then
+                        local Branch = require(Namespaces:FindFirstChild("Branch"))
+                        if Branch and Branch.Auxiliary and Branch.Auxiliary.connections then
+                            for _, conn in ipairs(Branch.Auxiliary.connections) do
+                                if typeof(conn) == "function" then
+                                    task.spawn(conn)
+                                    opened = true
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+
+        -- 2. Tự động kiểm tra và Redeem Voucher Auxiliary nếu có trong túi
+        pcall(function()
+            local Common = ReplicatedStorage:FindFirstChild("Common")
+            if Common then
+                local Network = Common:FindFirstChild("Network")
+                if Network then
+                    local Namespaces = Network:FindFirstChild("Namespaces")
+                    if Namespaces then
+                        local Vouchers = require(Namespaces:FindFirstChild("Vouchers"))
+                        if Vouchers and Vouchers.Store and Vouchers.Claim then
+                            local list = Vouchers.Store.client()
+                            if list then
+                                for _, item in ipairs(list) do
+                                    if item.type == "Auxiliary" then
+                                        Vouchers.Claim.post(item)
+                                        opened = true
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+
+        -- 3. Fallback: Duyệt cây PlayerGui bật trực tiếp lớp giao diện Auxiliary
+        pcall(function()
+            local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+            if playerGui then
+                for _, gui in ipairs(playerGui:GetChildren()) do
+                    if gui:IsA("ScreenGui") then
+                        for _, desc in ipairs(gui:GetDescendants()) do
+                            if desc:IsA("TextLabel") and (string.find(desc.Text, "Scouting Legion") or string.find(desc.Text, "Enlist in to")) then
+                                local curr = desc
+                                while curr and curr ~= gui do
+                                    if curr:IsA("GuiObject") then
+                                        curr.Visible = true
+                                        if curr:IsA("CanvasGroup") then
+                                            curr.GroupTransparency = 0
+                                        end
+                                    end
+                                    curr = curr.Parent
+                                end
+                                opened = true
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+
+        if Luna and typeof(Luna.Notification) == "function" then
+            if opened then
+                Luna:Notification({
+                    Title = "Auxiliary UI",
+                    Content = "Đã kích hoạt mở UI Auxiliary! Chọn Scouting Legion để gia nhập.",
+                    Icon = "military_tech",
+                    ImageSource = "Material"
+                })
+            else
+                Luna:Notification({
+                    Title = "Auxiliary UI",
+                    Content = "Đã gửi tín hiệu mở UI Auxiliary (Vui lòng kiểm tra màn hình game)!",
+                    Icon = "info",
+                    ImageSource = "Material"
+                })
+            end
+        end
+    end
+})
+
+TabAdvancedAuto:CreateButton({
+    Name = "Gia Nhập Trinh Sát Đoàn (Scouting Legion Post)",
+    Description = "Gửi Remote yêu cầu gia nhập Trinh Sát Đoàn lên Server",
+    Callback = function()
+        local sent = false
+        pcall(function()
+            local Common = ReplicatedStorage:FindFirstChild("Common")
+            if Common then
+                local Network = Common:FindFirstChild("Network")
+                if Network then
+                    local Namespaces = Network:FindFirstChild("Namespaces")
+                    if Namespaces then
+                        local Branch = require(Namespaces:FindFirstChild("Branch"))
+                        local Types = Common:FindFirstChild("Types")
+                        local Branches = require(Types:FindFirstChild("Branches"))
+                        local scoutId = (Branches and Branches.Branches and Branches.Branches.SCOUTING_LEGION) or 1
+
+                        Branch.Auxiliary.post(scoutId)
+                        Branch.Join.post({branch_id = scoutId})
+                        sent = true
+                    end
+                end
+            end
+        end)
+
+        if Luna and typeof(Luna.Notification) == "function" then
+            Luna:Notification({
+                Title = "Scouting Legion",
+                Content = sent and "Đã gửi yêu cầu kết nạp Trinh Sát Đoàn lên Server!" or "Không thể kết nối đến Network Branch!",
+                Icon = sent and "check_circle" or "report",
+                ImageSource = "Material"
+            })
+        end
+    end
+})
+
 TabAdvancedAuto:CreateSection("💥 Full Combat Auto (Silent-Aim & Đại Bác)")
 
 TabAdvancedAuto:CreateToggle({
