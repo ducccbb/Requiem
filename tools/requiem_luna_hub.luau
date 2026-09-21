@@ -268,49 +268,92 @@ local function sanitizeLunaSource(src)
 end
 
 -- =========================================================================
--- NẠP THƯ VIỆN LUNA INTERFACE SUITE
+-- NẠP THƯ VIỆN LUNA INTERFACE SUITE (MULTI-TIER CDN & FAILSAFE LOADER)
 -- =========================================================================
 local Luna = nil
+local lastLoadErrors = {}
 
-local loadOk, result = pcall(function()
-    local rawSource = game:HttpGet("https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/master/source.lua")
-    local fn: any = loadstring(sanitizeLunaSource(rawSource))
-    if typeof(fn) == "function" then
-        return fn()
+-- 1. Ưu tiên thử nạp từ ModuleScript nội bộ (Rojo / Roblox Studio)
+pcall(function()
+    local modRes = requireModule("luna_source")
+    if typeof(modRes) == "table" then
+        Luna = modRes
     end
-    return nil
 end)
 
-if loadOk and result then
-    Luna = result
-else
-    local localOk, localResult = pcall(function()
-        if typeof(readfile) == "function" then
-            local possiblePaths = {
-                "Luna-Interface-Suite-master/Luna-Interface-Suite-master/source.lua",
-                "Luna-Interface-Suite-master/source.lua",
-                "source.lua",
-                "c:/Users/ducsh/Downloads/Luna-Interface-Suite-master/Luna-Interface-Suite-master/source.lua",
-            }
-            for _, path in ipairs(possiblePaths) do
-                local ok, content = pcall(readfile, path)
-                if ok and content and #content > 0 then
-                    local fn: any = loadstring(sanitizeLunaSource(content))
-                    if typeof(fn) == "function" then
-                        return fn()
-                    end
+-- 2. Thử nạp từ hệ thống đường dẫn file cục bộ trong Executor (readfile)
+if not Luna and typeof(readfile) == "function" then
+    local localFilePaths = {
+        "tools/modules/luna_source.luau",
+        "Requiem/tools/modules/luna_source.luau",
+        "modules/luna_source.luau",
+        "luna_source.luau",
+        "source.lua",
+        "Luna-Interface-Suite-master/source.lua",
+        "Luna-Interface-Suite-master/Luna-Interface-Suite-master/source.lua",
+    }
+    for _, path in ipairs(localFilePaths) do
+        local ok, content = pcall(readfile, path)
+        if ok and typeof(content) == "string" and #content > 1000 then
+            local fnOk, fn = pcall(loadstring, sanitizeLunaSource(content))
+            if fnOk and typeof(fn) == "function" then
+                local execOk, res = pcall(fn)
+                if execOk and typeof(res) == "table" then
+                    Luna = res
+                    break
+                elseif not execOk then
+                    table.insert(lastLoadErrors, "Local file error (" .. path .. "): " .. tostring(res))
                 end
             end
         end
-        return nil
-    end)
-    if localOk and localResult then
-        Luna = localResult
+    end
+end
+
+-- 3. Nạp trực tuyến với danh sách CDN dự phòng (Vượt rào cản nhà mạng VN chặn GitHub Raw)
+if not Luna and typeof(game.HttpGet) == "function" and typeof(loadstring) == "function" then
+    local onlineMirrors = {
+        -- CDN jsDelivr tốc độ cao (Băng thông cực nhanh, không bị nhà mạng VN chặn)
+        "https://cdn.jsdelivr.net/gh/ducccbb/Requiem@main/tools/modules/luna_source.luau",
+        "https://cdn.jsdelivr.net/gh/Nebula-Softworks/Luna-Interface-Suite@master/source.lua",
+        -- GitHub Raw chính chủ repository Requiem
+        "https://raw.githubusercontent.com/ducccbb/Requiem/main/tools/modules/luna_source.luau",
+        -- GitHub Raw gốc của Nebula-Softworks
+        "https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/master/source.lua",
+        "https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/master/source.lua",
+    }
+
+    for _, url in ipairs(onlineMirrors) do
+        local fetchOk, rawSource = pcall(function()
+            return game:HttpGet(url)
+        end)
+
+        if fetchOk and typeof(rawSource) == "string" and #rawSource > 1000 then
+            local fnOk, fn = pcall(loadstring, sanitizeLunaSource(rawSource))
+            if fnOk and typeof(fn) == "function" then
+                local execOk, res = pcall(fn)
+                if execOk and typeof(res) == "table" then
+                    Luna = res
+                    break
+                else
+                    table.insert(lastLoadErrors, "Execute failed [" .. url .. "]: " .. tostring(res))
+                end
+            else
+                table.insert(lastLoadErrors, "Loadstring failed [" .. url .. "]: " .. tostring(fn))
+            end
+        else
+            table.insert(lastLoadErrors, "HttpGet failed [" .. url .. "]: " .. tostring(rawSource))
+        end
     end
 end
 
 if not Luna then
-    warn("[Requiem Hub] Không thể tải thư viện Luna Interface Suite! Vui lòng kiểm tra kết nối mạng hoặc đường dẫn file.")
+    warn("[Requiem Hub] Không thể tải thư viện Luna Interface Suite!")
+    if #lastLoadErrors > 0 then
+        warn("[Requiem Hub] Chi tiết lỗi kết nối / nạp:")
+        for _, err in ipairs(lastLoadErrors) do
+            warn("  -> " .. tostring(err))
+        end
+    end
     return
 end
 
