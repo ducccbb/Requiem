@@ -535,6 +535,8 @@ local _DodgeNamespace = nil
 local EnchantmentsNamespace = nil
 local ProficienciesNamespace = nil
 local InventoryNamespace = nil
+local ShopNamespace = nil
+local MerchantPricing = nil
 
 pcall(function()
     local Common = ReplicatedStorage:WaitForChild("Common")
@@ -555,8 +557,13 @@ pcall(function()
     pcall(function() EnchantmentsNamespace = require(Namespaces:WaitForChild("Enchantments")) end)
     pcall(function() ProficienciesNamespace = require(Namespaces:WaitForChild("Proficiencies")) end)
     pcall(function() InventoryNamespace = require(Namespaces:WaitForChild("Inventory")) end)
+    pcall(function() ShopNamespace = require(Namespaces:WaitForChild("Shop")) end)
     pcall(function() _CombatNamespace = require(Namespaces:WaitForChild("Combat")) end)
     pcall(function() _DodgeNamespace = require(Namespaces:WaitForChild("Dodge")) end)
+    pcall(function()
+        local Economy = Common:WaitForChild("Economy")
+        MerchantPricing = require(Economy:WaitForChild("MerchantPricing"))
+    end)
 end)
 
 local ClientStateHandler = nil
@@ -866,9 +873,12 @@ local Settings = {
     BenchMaxDist = 30,
     BenchDelay = 1.0,
 
-    -- Fishing
+    -- Fishing & Economy
     AutoFishing = false,
     BypassFishingExhaustion = true,
+    InfiniteInventoryWeight = true,
+    AutoSellFish = false,
+    AutoSellThreshold = 10,
 
     -- Skillcheck (Legacy & VIM)
     AutoSkillcheck = false,
@@ -1397,7 +1407,13 @@ pcall(function()
             local function hookedVitClient(...)
                 local vit = origVitClient(...)
                 if vit and typeof(vit) == "table" then
-                    vit.exhaustion = 0
+                    if Settings.BypassFishingExhaustion ~= false then
+                        vit.exhaustion = 0
+                    end
+                    if Settings.InfiniteInventoryWeight ~= false then
+                        vit.weight = 0
+                        vit.maxWeight = 99999
+                    end
                 end
                 return vit
             end
@@ -1412,12 +1428,108 @@ pcall(function()
 end)
 
 RunService.Heartbeat:Connect(function()
-    if Settings.BypassFishingExhaustion ~= false then
-        if _VitalityNamespace and _VitalityNamespace.Store and typeof(_VitalityNamespace.Store.client) == "function" then
-            pcall(function()
-                local vit = _VitalityNamespace.Store.client()
-                if vit and typeof(vit) == "table" then
+    if _VitalityNamespace and _VitalityNamespace.Store and typeof(_VitalityNamespace.Store.client) == "function" then
+        pcall(function()
+            local vit = _VitalityNamespace.Store.client()
+            if vit and typeof(vit) == "table" then
+                if Settings.BypassFishingExhaustion ~= false then
                     vit.exhaustion = 0
+                end
+                if Settings.InfiniteInventoryWeight ~= false then
+                    vit.weight = 0
+                    vit.maxWeight = 99999
+                end
+            end
+        end)
+    end
+end)
+
+-- Khởi tạo sức chứa vô hạn qua Attribute Spoofer
+pcall(function()
+    setSpoofedAttribute("MaximumWeight", 99999)
+    setSpoofedAttribute("MaximumWeightMultiplier", 100.0)
+end)
+
+-- =========================================================================
+-- HỆ THỐNG TỰ ĐỘNG BÁN ĐỒ / THU HOẠCH MARCS (MERCHANT AUTO SELL SUITE)
+-- =========================================================================
+local function sellAllInventoryItems(quiet: boolean?)
+    local count = 0
+    local success, err = pcall(function()
+        if not InventoryNamespace or not ShopNamespace or not _ClientInventoryHandler then
+            if not quiet then
+                Luna:Notification({ Title = "Bán Đồ", Content = "Hệ thống Túi Đồ / Shop chưa sẵn sàng!", Icon = "report" })
+            end
+            return
+        end
+        
+        local inv = InventoryNamespace.Store.get(LocalPlayer)
+        if not inv or #inv == 0 then
+            if not quiet then
+                Luna:Notification({ Title = "Bán Đồ", Content = "Túi đồ của bạn đang trống!", Icon = "info" })
+            end
+            return
+        end
+        
+        local itemsToSell = {}
+        for _, item in ipairs(inv) do
+            local name = _ClientInventoryHandler.getItemNameFromHash(item.id)
+            if name and name ~= "Marcs" and name ~= "Pouch" and name ~= "Fishing Rod" and name ~= "Pickaxe" and name ~= "Kure Pickaxe" and name ~= "Axe" and name ~= "Canteen" and name ~= "Counter" and name ~= "Focus" then
+                local isBlocked = false
+                if MerchantPricing and typeof(MerchantPricing.itemTagsBlockMerchantSell) == "function" then
+                    isBlocked = MerchantPricing.itemTagsBlockMerchantSell(item.tags)
+                end
+                if not isBlocked then
+                    local stackAmt = 1
+                    if item.meta and typeof(item.meta) == "table" and item.meta[1] and typeof(item.meta[1]) == "number" then
+                        stackAmt = item.meta[1]
+                    elseif item.stack and typeof(item.stack) == "number" then
+                        stackAmt = item.stack
+                    end
+                    table.insert(itemsToSell, {
+                        id = item.id,
+                        offset = item.offset,
+                        amount = stackAmt
+                    })
+                    count = count + 1
+                end
+            end
+        end
+        
+        if #itemsToSell > 0 then
+            ShopNamespace.SellMany.post(itemsToSell)
+            if not quiet then
+                Luna:Notification({
+                    Title = "Bán Đồ Thành Công",
+                    Content = string.format("Đã bán %d món đồ (Cá, Quặng...) sang Thương nhân lấy Marcs!", count),
+                    Icon = "check_circle"
+                })
+            end
+        else
+            if not quiet then
+                Luna:Notification({
+                    Title = "Bán Đồ",
+                    Content = "Không có cá hoặc vật phẩm nào có thể bán được!",
+                    Icon = "info"
+                })
+            end
+        end
+    end)
+    if not success and not quiet then
+        Luna:Notification({ Title = "Lỗi Bán Đồ", Content = tostring(err), Icon = "report" })
+    end
+    return count
+end
+
+-- Vòng lặp định kỳ: Tự động bán đồ khi túi đồ đạt ngưỡng
+task.spawn(function()
+    while true do
+        task.wait(4)
+        if Settings.AutoSellFish and InventoryNamespace and ShopNamespace and _ClientInventoryHandler then
+            pcall(function()
+                local inv = InventoryNamespace.Store.get(LocalPlayer)
+                if inv and #inv >= (Settings.AutoSellThreshold or 10) then
+                    sellAllInventoryItems(true)
                 end
             end)
         end
@@ -6053,6 +6165,54 @@ TabCraft:CreateButton({
                 Title = "Merchant TP",
                 Content = "Không tìm thấy NPC Thương nhân nào trong khu vực!",
                 Icon = "report"
+            })
+        end
+    end
+})
+
+TabCraft:CreateButton({
+    Name = "💰 Bán Sạch Cá & Khoáng Sản Lấy Marcs (Sell All Fish/Ores)",
+    Description = "Tự động lọc và bán toàn bộ cá câu được, quặng đào được sang Thương nhân ngay lập tức để giải phóng túi đồ",
+    Callback = function()
+        sellAllInventoryItems(false)
+    end
+})
+
+TabCraft:CreateToggle({
+    Name = "🔄 Auto Bán Đồ Khi Túi Gần Đầy (Auto Sell When Full)",
+    Description = "Tự động gửi bán cá và khoáng sản sang Thương nhân khi túi đồ có từ 10 món trở lên, giải phóng 100% sức chứa",
+    CurrentValue = false,
+    Callback = function(val)
+        Settings.AutoSellFish = val
+        Luna:Notification({
+            Title = "Auto Bán Đồ",
+            Content = val and "Đã bật: Tự động bán sạch cá/quặng khi túi đồ đạt ngưỡng!" or "Đã tắt Auto Bán Đồ.",
+            Icon = val and "bolt" or "info"
+        })
+    end
+})
+
+TabCraft:CreateToggle({
+    Name = "🎒 Vô Hạn Sức Chứa & Trọng Lượng Túi (Weight 99,999 lbs)",
+    Description = "Ép MaximumWeight = 99,999 lbs và khóa cân nặng = 0, mang vác hàng nghìn vật phẩm không lo quá tải",
+    CurrentValue = true,
+    Callback = function(val)
+        Settings.InfiniteInventoryWeight = val
+        if val then
+            setSpoofedAttribute("MaximumWeight", 99999)
+            setSpoofedAttribute("MaximumWeightMultiplier", 100.0)
+            Luna:Notification({
+                Title = "Vô Hạn Sức Chứa",
+                Content = "Đã kích hoạt sức chứa 99,999 lbs & xóa bỏ gánh nặng thể lực!",
+                Icon = "bolt"
+            })
+        else
+            setSpoofedAttribute("MaximumWeight", nil)
+            setSpoofedAttribute("MaximumWeightMultiplier", nil)
+            Luna:Notification({
+                Title = "Sức Chứa",
+                Content = "Đã khôi phục sức chứa mặc định.",
+                Icon = "info"
             })
         end
     end
